@@ -1,0 +1,16 @@
+.navbar-brand img{
+	max-width: 50px;
+	max-height: 50px;
+}
+.nav-link{
+	color: white !important;
+	font-weight: bold;
+}
+.nav-link:hover{
+	color: gray !important;
+}
+
+.center-block{
+	padding-top: 15px;
+	max-width: 1110px;
+}
