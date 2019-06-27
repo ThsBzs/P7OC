@@ -1,3 +1,6 @@
+body{
+	padding-top: 5px;
+}
 .navbar-brand img{
 	max-width: 50px;
 	max-height: 50px;
@@ -9,8 +12,56 @@
 .nav-link:hover{
 	color: gray !important;
 }
-
-.center-block{
-	padding-top: 15px;
-	max-width: 1110px;
+/*Nom du site et mode d'emploi de l'application*/
+#pLink{
+	margin: auto 5px !important;
+	font-size: 20px !important;
 }
+/*Décalage des éléments après menu*/
+nav{
+	margin-bottom: 15px;	
+}
+/* Div avec fond image Paris */
+#parisImg{
+	height: 500px;
+	width: 100%;
+	background-image: url("../images/paris.png");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+	margin: -20px auto;
+}
+/*Texte de présentation de l'application devant l'image de Paris*/
+.imgText{
+	margin: 120px auto;
+	background-color: #2e3439;
+	padding: 15px;
+	color: white;
+	opacity: 0.9;
+}
+/*Bouton de lancement de l'application*/
+.imgText input{
+	opacity: 1 !important;;
+}
+/*Mode d'emploi de l'application */
+#explain{
+	text-align: center;
+	margin: 5px auto !important;;
+	font-size: 18px;
+}
+
+#footer{
+	font-size: 18px;
+	min-height: 45px;
+	background-color: #343a40 ;
+	text-align: center;
+	padding-top: 10px;
+	color: white;
+	margin-top: 15px;
+}
+
+#footer a{
+	color: white !important;
+	text-decoration: none;
+}
+
