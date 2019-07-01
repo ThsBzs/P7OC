@@ -49,6 +49,16 @@ nav{
 	margin: 5px auto !important;;
 	font-size: 18px;
 }
+/*carte*/
+#map{
+	height: 450px;
+	width: 450px;
+}
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
 
 #footer{
 	font-size: 18px;
