@@ -27,6 +27,17 @@ Vue.component('explain', {
 			</div>`
 })
 
+Vue.component('homepage', {
+	/*props: ['type'],*/
+	template: `<div>
+			<h3>Bienvenue à Paris, capitale mondiale de la gastronomie.</h4>
+				<p>Paris Restos vous propose de découvrir les meilleurs restaurants de la capitale, notés par nos utilisateurs, notés par VOUS. <br>
+				Choisissez un secteur, nous vous proposerons les restaurants les plus proches. Vous pouvez par ailleurs contribuer à l'expérience en proposant de nouvelles adresses, qui seront vérifiées par les autres utilisateurs gourmets. <br>
+				</p>
+				<input type="button" class="btn btn-success" value="Commencer" @click.prevent="hide()" @click.prevent="map.initMap()">
+			</div>`
+})
+
 let vm = new Vue({
 	el: '#parisBox',
 	/*components: {explain},*/

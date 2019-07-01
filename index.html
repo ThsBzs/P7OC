@@ -12,7 +12,7 @@
 <div class="container">
 	 <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
   		<!-- Logo -->
-  		<a class="navbar-brand" href="./index.html"><img src="images/logo.png" alt="logo"></a>
+  		<a class="navbar-brand" :href="showPageHome()"><img src="images/logo.png" alt="logo"></a>
 		<p class="navbar-brand" id="pLink">Paris Restos</p>
   		<!-- Liens vers les pages -->
   		<ul class="navbar-nav">
@@ -20,28 +20,31 @@
   				<p class="nav-link" id="pLink">Paris Restos</p>
   			</li> -->
     		<li class="nav-item">
-      			<a class="nav-link" href="./about.html">A propos</a>
+      			<a class="nav-link" href="#" @click="showPageAbout()">A propos</a>
     		</li>
     		<li class="nav-item">
-      			<a class="nav-link" href="./partners.html">Nos partenaires</a>
+      			<a class="nav-link" href="#" @click="showPagePartners()">Nos partenaires</a>
     		</li>
   		</ul>
 	</nav>
 	<div class="row" id="parisBox">
-		<div class="col-lg-10 text-center" id="parisImg" v-if="shown">
+		<div class="col-lg-10 text-center" id="about" v-if="showAbout">
+			<p>A propos de Paris Restos : lorem ipsum...</p>
+		</div>
+		<div class="col-lg-10 text-center" id="partners" v-if="showPartners">
+			<p>Nos partenaires : lorem ipsum...</p>
+		</div>
+		<div class="col-lg-10 text-center" id="parisImg" v-if="showImgText">
 			<div class="imgText">
 				<h3>Bienvenue à Paris, capitale mondiale de la gastronomie.</h4>
 				<p>Paris Restos vous propose de découvrir les meilleurs restaurants de la capitale, notés par nos utilisateurs, notés par VOUS. <br>
 				Choisissez un secteur, nous vous proposerons les restaurants les plus proches. Vous pouvez par ailleurs contribuer à l'expérience en proposant de nouvelles adresses, qui seront vérifiées par les autres utilisateurs gourmets. <br>
 				</p>
-				<input type="button" class="btn btn-success" value="Commencer" @click.prevent="hide()">
+				<input type="button" class="btn btn-success" value="Commencer" @click.prevent="hide()" @click.prevent="map.initMap()">
 			</div>
 		</div>
 		<div class="col-lg-8" id="explain" v-else> 
-			<p>Pour consulter les restaurants dans votre secteur, centrez la carte sur votre position, ou renseignez une adresse, puis validez. <br>
-			Vous pouvez filtrer les résultats en fonction des notes attribuées par nos utilisateurs.</p> 
-			<br>
-			<p>Si vous souhaitez ajouter un restaurant, cliquez sur "Ajouter", et laissez-vous guider.</p>
+			<explain></explain>
 		</div>
 		<div id="map"></div>
 	</div> 
@@ -49,7 +52,7 @@
 	<!-- <footer class="page-footer font-small">
 		<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
 	  		Copyright -->
-  			<div class="col-lg-12" id="footer">© 2019 Copyright:
+  			<div class="col-lg-12" id="footer">© 2019 Copyright
     			<a href="http://www.homesailor.fr"> homesailor.fr</a>
   			</div>
  	<!--  Copyright
@@ -59,6 +62,8 @@
 <!-- Footer -->
 
 <!-- Footer -->
+<script src="https://maps.googleapis.com/maps/api/js?key=&callback=map.initMap()"
+    async defer type="module"></script>
 <script src="./scripts/vue.js"></script>
 <script src="./scripts/main.js"></script>
 
