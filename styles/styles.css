@@ -1,5 +1,5 @@
 body{
-	padding-top: 5px;
+	padding-top: 5px !important;
 }
 .navbar-brand img{
 	max-width: 50px;
@@ -74,4 +74,9 @@ html, body {
 	color: white !important;
 	text-decoration: none;
 }
-
+/*Formulaire d'ajout*/
+#addForm{
+	padding: 5px;
+	height: 450px;
+	overflow: auto;
+}
