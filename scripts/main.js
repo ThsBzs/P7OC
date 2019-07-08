@@ -160,8 +160,7 @@ function initMap() {
         handleLocationError(false, marker, map.getCenter());
     }
 //Requête json sur les lieux autour d'un point.
-//Bloquée par CORS
-//$.get("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=48.874955,2.350517&radius=1500&type=restaurant&key=AIzaSyCh2XRafXi0fMlQQ2-w-F-znOO4pvOtwmY");
+//$.get("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=48.874955,2.350517&radius=1500&type=restaurant&key=");
 //Essai d'utilisation de places
 //Choix d'un emplacement pour le centrage
   let request = {
@@ -212,11 +211,11 @@ $('#parisBox').on("click", "#sendResto", function(e){
   e.preventDefault();
 });
 //*******************AJOUT DES RESTOS DEPUIS LE FICHIER JSON***********
-/*    map.data.loadGeoJson(
+   map.data.loadGeoJson(
       //'./scripts/adress.json', Version json classique
-      './scripts/adress2.js' //Version adaptée GeoJson
+      './scripts/adress2.geojson' //Version adaptée GeoJson
       )
-};*/
+
 
 // Create a <script> tag and set the USGS URL as the source.
         let script = document.createElement('script');

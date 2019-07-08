@@ -80,3 +80,9 @@ html, body {
 	height: 450px;
 	overflow: auto;
 }
+li{
+	list-style-type: none;
+}
+#restoList{
+	background-color: #ffffcc;
+}
