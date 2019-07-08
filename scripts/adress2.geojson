@@ -1,48 +1,34 @@
-[
+{
+	"type": "FeatureCollection",
+  	"features": [
+	{
+	  "type": "Feature",
+	  	 "properties":{
+	         "restaurantName":"Bronco",
+		      "address":"39 Rue des Petites Écuries, 75010 Paris",
+		      "ratings":[
+		         {
+		            "stars":"4",
+		            "comment":"Un excellent restaurant, j'y reviendrai ! Par contre il vaut mieux aimer la viande."
+		         },
+		         {
+		            "stars":"5",
+		            "comment":"Tout simplement mon restaurant préféré !"
+		         }
+		    ]
+	  	},
+	  "geometry":{
+	    "type":"Point",
+	    "coordinates": [48.8737815,2.3501649]
+	  }
+	},
+	{
+	  "type": "Feature",
+	  	 "properties": {
+	         "restaurantName":"Babalou",
 
-   {
-
-      "restaurantName":"Bronco",
-
-      "address":"39 Rue des Petites Écuries, 75010 Paris",
-
-      "lat":48.8737815,
-
-      "long":2.3501649,
-
-      "ratings":[
-
-         {
-
-            "stars":4,
-
-            "comment":"Un excellent restaurant, j'y reviendrai ! Par contre il vaut mieux aimer la viande."
-
-         },
-
-         {
-
-            "stars":5,
-
-            "comment":"Tout simplement mon restaurant préféré !"
-
-         }
-
-      ]
-
-   },
-
-   {
-
-      "restaurantName":"Babalou",
-
-      "address":"4 Rue Lamarck, 75018 Paris",
-
-      "lat":48.8865035,
-
-      "long":2.3442197,
-
-      "ratings":[
+      			"address":"4 Rue Lamarck, 75018 Paris",
+		            "ratings":[
 
          {
 
@@ -61,19 +47,19 @@
          }
 
       ]
+	  	},
+	  "geometry": {
+	    "type": "Point",
+	    "coordinates": [48.8865035, 2.3442197]
+	  }
 
-   },
-
-      {
-
-      "restaurantName":"Tataya",
+	},
+	{
+	  "type": "Feature",
+	  	 "properties": {
+	               "restaurantName":"Tataya",
 
       "address":"18-30 Boulevard des Capucines, 75009 Paris",
-
-      "lat":48.869962, 
-
-      "long":2.328573,
-
       "ratings":[
 
          {
@@ -93,19 +79,19 @@
          }
 
       ]
+	  	},
+	  "geometry": {
+	    "type": "Point",
+	    "coordinates": [48.869962, 2.328573]
+	  }
 
-   },
-
-      {
-
-      "restaurantName":"Ratatouille",
+	},
+	{
+	  "type": "Feature",
+	  	 "properties": {
+	               "restaurantName":"Ratatouille",
 
       "address":"221-215 Boulevard Saint-Germain, 75007 Paris",
-
-      "lat":48.857227,
-
-      "long":2.324269,
-
       "ratings":[
          {
 
@@ -132,19 +118,19 @@
          }
 
       ]
+	  	},
+	  "geometry": {
+	    "type": "Point",
+	    "coordinates": [48.857227, 2.324269]
+	  }
 
-   },
-
-      {
-
-      "restaurantName":"Essaydonc",
+	},
+	{
+	  "type": "Feature",
+	  	 "properties": {
+	               "restaurantName":"Essaydonc",
 
       "address":"116-128 Avenue de Suffren, 75007 Paris",
-
-      "lat":48.848255,
-
-      "long":2.305612,
-
       "ratings":[
 
          {
@@ -164,19 +150,19 @@
          }
 
       ]
+	  	},
+	  "geometry": {
+	    "type": "Point",
+	    "coordinates": [48.848255, 2.305612]
+	  }
 
-   },
-
-      {
-
-      "restaurantName":"Le Moulin de la Pasteque",
+	},
+	{
+	  "type": "Feature",
+	  	 "properties": {
+	               "restaurantName":"Le Moulin de la Pasteque",
 
       "address":"4-12 Rue Jules Pichard, 75012 Paris",
-
-      "lat":48.834910,
-
-      "long":2.396069,
-
       "ratings":[
 
          {
@@ -196,19 +182,19 @@
          }
 
       ]
+	  	},
+	  "geometry": {
+	    "type": "Point",
+	    "coordinates": [48.834910, 2.396069]
+	  }
 
-   },
-
-      {
-
-      "restaurantName":"Boulle et Bill",
+	},
+	{
+	  "type": "Feature",
+	  	 "properties": {
+	               "restaurantName":"Boulle et Bill",
 
       "address":"2 Rue Pierre Bourdan, 75012 Paris",
-
-      "lat":48.846550,
-
-      "long":2.391955,
-
       "ratings":[
 
          {
@@ -228,19 +214,19 @@
          }
 
       ]
+	  	},
+	  "geometry": {
+	    "type": "Point",
+	    "coordinates": [48.846550, 2.391955]
+	  }
 
-   },
-
-      {
-
-      "restaurantName":"L'Abribus",
+	},
+		{
+	  "type": "Feature",
+	  	 "properties": {
+	                     "restaurantName":"L'Abribus",
 
       "address":"54-58 Rue de Bagnolet, 75020 Paris",
-
-      "lat":48.857508,
-
-      "long":2.399245,
-
       "ratings":[
 
          {
@@ -260,19 +246,19 @@
          }
 
       ]
+	  	},
+	  "geometry": {
+	    "type": "Point",
+	    "coordinates": [48.857508, 2.399245]
+	  }
 
-   },
-
-      {
-
+	},
+		{
+	  "type": "Feature",
+	  	 "properties": {
       "restaurantName":"Là-Haut",
 
-      "address":"39 Rue des Petites Écuries, 75010 Paris",
-
-      "lat":48.865672,
-
-      "long":2.372448,
-
+      "address":"38 BIS Avenue de la République, 75011 Paris",
       "ratings":[
 
          {
@@ -292,7 +278,13 @@
          }
 
       ]
+	  	},
+	  "geometry": {
+	    "type": "Point",
+	    "coordinates": [48.865672, 2.372448]
+	  }
 
-   }
+	}
 
-]
+	]
+}

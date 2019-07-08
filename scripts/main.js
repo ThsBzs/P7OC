@@ -4,12 +4,19 @@ $(function(){
 let showHome = true,
 	showAbout =false,
 	showPartners = false;
-
 //Premier appel de la fonction pour afficher le contenu dès l'ouverture de la page
 changeDom();
 
+//Essai de fonction pour true/false, ne marche pas
+/*function trueFalse(elt){
+  showHome = false;
+  showAbout = false;
+  showPartners = false;
+  elt = true;
+};*/
 
 $('#home').click(function(e){
+  /*trueFalse(showHome);*/
 	showHome = true;
 	showAbout = false;
 	showPartners = false;
@@ -18,6 +25,7 @@ $('#home').click(function(e){
 });
 
 $('#about').click(function(e){
+  /*trueFalse(showAbout);*/
 	showHome = false;
 	showAbout =true;
 	showPartners = false;
@@ -26,6 +34,7 @@ $('#about').click(function(e){
 });
 
 $('#partners').click(function(e){
+  /*trueFalse(showPartners);*/
 	showHome = false;
 	showAbout = false;
 	showPartners = true;
@@ -33,29 +42,31 @@ $('#partners').click(function(e){
 	e.preventDefault();
 });
 
+//*************FONCTION DE MODIFICATION DE L'AFFICHAGE
 function changeDom(){
-if (showHome == true){
-	$('#parisBox').hide().empty().append(`<div class="col-lg-10 text-center" id="parisImg" v-if="showImgText">
-			<div class="imgText">
-				<h3>Bienvenue !</h4>
-				<p>Restocalize vous propose de découvrir les meilleurs restaurants alentour, notés par nos utilisateurs, notés par VOUS. <br>
-				Choisissez un secteur, nous vous proposerons les restaurants les plus proches. Vous pouvez par ailleurs contribuer à l'expérience en proposant de nouvelles adresses, qui seront vérifiées par les autres utilisateurs gourmets. <br>
-				</p>
-				<input type="button" class="btn btn-info" value="Commencer" id="begin">
-			</div>
-		</div>`).show();
-} else if (showAbout == true){
-	$('#parisBox').hide().empty().append(`<div class="col-lg-10 text-center" id="about" v-if="showAbout">
-			<p>A propos de Restocalize : lorem ipsum...</p>
-		</div>`).show();
-} else if (showPartners == true){
-	$('#parisBox').hide().empty().append(`<div class="col-lg-10 text-center" id="partners" v-if="showPartners">
-			<p>Nos partenaires : lorem ipsum...</p>
-		</div>`).show();
+  if (showHome == true){
+  	$('#parisBox').hide().empty().append(`<div class="col-lg-10 text-center" id="parisImg" v-if="showImgText">
+  			<div id="imgText">
+  				<h3>Bienvenue !</h4>
+  				<p>Restocalize vous propose de découvrir les meilleurs restaurants alentour, notés par nos utilisateurs, notés par VOUS. <br>
+  				Choisissez un secteur, nous vous proposerons les restaurants les plus proches. Vous pouvez par ailleurs contribuer à l'expérience en proposant de nouvelles adresses, qui seront vérifiées par les autres utilisateurs gourmets. <br>
+  				</p>
+  				<input type="button" class="btn btn-info" value="Commencer" id="begin">
+  			</div>
+  		</div>`).show();
+  } else if (showAbout == true){
+  	$('#parisBox').hide().empty().append(`<div class="col-lg-10 text-center" id="about" v-if="showAbout">
+  			<p>A propos de Restocalize : lorem ipsum...</p>
+  		</div>`).show();
+  } else if (showPartners == true){
+  	$('#parisBox').hide().empty().append(`<div class="col-lg-10 text-center" id="partners" v-if="showPartners">
+  			<p>Nos partenaires : lorem ipsum...</p>
+  		</div>`).show();
+  };
 };
-};
+
  /*Gestion du clic sur le bouton de lancement*/
-$('#begin').click(function(){
+$('#parisBox').on("click", "#begin", function(){
 	$('#parisBox').hide().empty().append(`<div id="explain" class="col-lg-12">
 										<p>Pour consulter les restaurants dans votre secteur, merci d'autoriser l'accès à la position ou la localisation pour votre navigateur. Promis, nous ne viendrons pas sonner chez vous ! <br>
 										Vous pouvez filtrer les résultats en fonction des notes attribuées par nos utilisateurs.</p> 
@@ -65,62 +76,65 @@ $('#begin').click(function(){
 											<div class="row">
 												<div id="map"class="col-lg-6"></div>
 												<div class="col-lg-6" id="mapInfoContainer">
-													<h5>Restaurants trouvés :</h5>
-													<div id="mapInfo"></div>
-													<input type="button" class="btn btn-info" value="Ajouter" id="addNew">
+                          <div id="mapInfo">
+													 <h5>Résultat de la recherche :</h5>
+													 <div>
+                             <ul id="restoList"></ul>
+                            </div>
+													 <input type="button" class="btn btn-info" value="Ajouter" id="addNew">
+                          </div>
+                          <div id="form">
+                            <form id="addForm">
+                              <div class="form-group">
+                                <label for="Nom du restaurant">Nom:</label>
+                                <input type="text" class="form-control" id="name">
+                              </div>
+                              <div class="form-group">
+                                <label for="adresse">Adresse:</label>
+                                <input type="text" class="form-control" id="address">
+                              </div>
+                              <div class="form-group">
+                                <label for="code">Code Postal:</label>
+                                <input type="text" class="form-control" id="code">
+                              </div>
+                              <div class="form-group">
+                                <label for="ville">Ville:</label>
+                                <input type="text" class="form-control" id="city">
+                              </div>
+                              <div class="form-group">
+                                <label for="commentaire">Commentaire:</label>
+                                <input type="text" class="form-control" id="comment">
+                              </div>
+                              <div class="form-group">
+                                <label for="stars">Note:</label>
+                              <select class="form-control" id="stars">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                              </select>
+                            </div>
+                              <button type="submit" class="btn btn-info" id="sendResto">Envoyer</button>
+                          </form> 
+                          </div>
 												</div>
 											</div>
 										</div>
-									</div>`).show();
+									</div>`);
+  $('#form').hide();
+  $('#parisBox').show();
 	initMap();
-
 });
 
 //Gestion du clic sur le bouton d'ajout
 $('#parisBox').on("click", "#addNew", function(){
-	$('#mapInfoContainer').hide().empty().append(` <form id="addForm">
-  														<div class="form-group">
-  														  <label for="Nom du restaurant">Nom:</label>
-  														  <input type="text" class="form-control" id="name">
-  														</div>
-  														<div class="form-group">
-  														  <label for="numéro">Numéro:</label>
-  														  <input type="text" class="form-control" id="number">
-  														</div>
-  														<div class="form-group">
-  														  <label for="rue">Rue:</label>
-  														  <input type="text" class="form-control" id="street">
-  														</div>
-  														<div class="form-group">
-  														  <label for="code">Code Postal:</label>
-  														  <input type="text" class="form-control" id="code">
-  														</div>
-  														<div class="form-group">
-  														  <label for="ville">Ville:</label>
-  														  <input type="text" class="form-control" id="city">
-  														</div>
-  														<div class="form-group">
-  														  <label for="commentaire">Commentaire:</label>
-  														  <input type="text" class="form-control" id="comment">
-  														</div>
-  														<div class="form-group">
-	  														<label for="stars">Note:</label>
-															<select class="form-control" id="stars">
-															  <option>1</option>
-															  <option>2</option>
-															  <option>3</option>
-															  <option>4</option>
-															  <option>5</option>
-															</select>
-														</div>
-  														<button type="submit" class="btn btn-info">Submit</button>
-													</form> `
-		).show();
-	console.log("pouet");
+	$('#mapInfo').hide();
+  $('#form').show();
 });
 
 /********************GESTION DE LA CARTE*************************/
-let map, infoWindow;
+let map, infoWindow, marker, geocoder, address;
 
 //**************INITIALISATION DE LA CARTE******************
 function initMap() {
@@ -128,41 +142,133 @@ function initMap() {
     	center: {lat: 48.874955, lng: 2.350517},
     	zoom: 12
     });
-    infoWindow = new google.maps.InfoWindow;
-
+    
 //*****************GESTION DE LA GEOLOCALISATION******************
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
-        	var pos = {
+        	let pos = {
               lat: position.coords.latitude,
               lng: position.coords.longitude
             };
-
-        	infoWindow.setPosition(pos);
-        	infoWindow.setContent('Vous êtes (à peu près) ici');
-        	infoWindow.open(map);
+            marker = new google.maps.Marker({position: pos, map: map});
         	map.setCenter(pos);
         }, function() {
-        	handleLocationError(true, infoWindow, map.getCenter());
+        	handleLocationError(true, marker, map.getCenter());
         });
     } else {
         // Browser doesn't support Geolocation
-        handleLocationError(false, infoWindow, map.getCenter());
+        handleLocationError(false, marker, map.getCenter());
     }
+//Requête json sur les lieux autour d'un point.
+//Bloquée par CORS
+//$.get("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=48.874955,2.350517&radius=1500&type=restaurant&key=AIzaSyCh2XRafXi0fMlQQ2-w-F-znOO4pvOtwmY");
+//Essai d'utilisation de places
+//Choix d'un emplacement pour le centrage
+  let request = {
+    query: 'Faubourg Poissonière',//Recherche lancée par Google
+    fields: ['name', 'geometry'],//Dépend du résultat google
+  };
 
- /*   map.data.loadGeoJson(
-      '../scripts/adress.json');*/
+//Fonction d'ajout d'un marker, paramètre
+  function createMarker (place) {
+  let marker = new google.maps.Marker ({
+    map: map,
+    position: place.geometry.location
+  });
+};
+  let service = new google.maps.places.PlacesService(map);
 
-}
+  service.findPlaceFromQuery(request, function(results, status) {
+    if (status === google.maps.places.PlacesServiceStatus.OK) {
+      for (let i = 0; i < results.length; i++) {
+        createMarker(results[i]);
+      }
+      map.setCenter(results[0].geometry.location);
+    }
+  });
 
-function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-    infoWindow.setPosition(pos);
-    infoWindow.setContent(browserHasGeolocation ?
+//Ajout d'un marqueur sur la carte lors d'un clic.FONCTIONNE
+map.addListener('click', function(e){
+    let pos = e.latLng;
+    map.setCenter(pos);
+    let marker = new google.maps.Marker({
+    map: map,
+    position: pos
+  });
+    map.setCenter(pos);
+});
+
+//Préparation d'ajout d'un marqueur sur adresse saisie
+geocoder = new google.maps.Geocoder();
+//Fonction de codage en latLng
+//Gestion du formulaire d'ajout d'adresse
+$('#parisBox').on("click", "#sendResto", function(e){
+  const addInfo = [addForm.elements.name.value, addForm.elements.address.value, addForm.elements.code.value, addForm.elements.city.value, addForm.elements.comment.value, addForm.elements.stars.value];
+  address = (addInfo[1] + ' ' + addInfo[2] + ', ' + addInfo[3]);
+  codeAddress(geocoder, map);
+  $('#restoList').append('<li>' + addInfo + '</li>' );
+  $('#form').hide();
+  $('#mapInfo').show();
+  e.preventDefault();
+});
+//*******************AJOUT DES RESTOS DEPUIS LE FICHIER JSON***********
+/*    map.data.loadGeoJson(
+      //'./scripts/adress.json', Version json classique
+      './scripts/adress2.js' //Version adaptée GeoJson
+      )
+};*/
+
+// Create a <script> tag and set the USGS URL as the source.
+        let script = document.createElement('script');
+        // This example uses a local copy of the GeoJSON stored at
+        // http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojsonp
+        //script.src = './scripts/adress2.js';
+        document.getElementsByTagName('head')[0].appendChild(script);
+
+};//Pas touche, fin d'initMap
+
+
+//Fonction codeAdress pour l'affichage du marker sur l'adresse saisie 
+function codeAddress(geocoder, map) {
+        geocoder.geocode({'address': address}, function(results, status) {
+          if (status === 'OK') {
+            map.setCenter(results[0].geometry.location);
+            let marker = new google.maps.Marker({
+              map: map,
+              position: results[0].geometry.location
+            });
+            } else {
+            alert('Geocode was not successful for the following reason: ' + status);
+          }
+        });
+      };
+
+
+
+//Ajout théorique d'un marker sur les éléments json passés en paramètre            
+window.eqfeed_callback = function(results) {
+        for (let i = 0; i < results.features.length; i++) {
+          let coords = results.features[i].geometry.coordinates;
+          let latLng = new google.maps.LatLng(coords[0],coords[1]);
+          let marker = new google.maps.Marker({
+            position: latLng,
+            map: map
+          });
+        }
+      };
+
+//Centrage de la carte sur la position de l'utilisateur si  autorisation = ok FONCTIONNE
+function handleLocationError(browserHasGeolocation, marker, pos) {
+    marker.setPosition(pos);
+    marker.setContent(browserHasGeolocation ?
                               'Erreur de géolocalisation.' :
                               'Erreur: votre navigateur n\'accepte pas la géolocalisation.');
-    infoWindow.open(map);
+    marker.open(map);
 }
+
+
 
 
 
 })//Pas touche, fin de funtion jquery
+

@@ -32,7 +32,7 @@ nav{
 	margin: -20px auto;
 }
 /*Texte de présentation de l'application devant l'image de Paris*/
-.imgText{
+#imgText{
 	margin: 120px auto;
 	background-color: #2e3439;
 	padding: 15px;
