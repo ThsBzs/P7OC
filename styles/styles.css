@@ -54,6 +54,7 @@ nav{
 	height: 450px;
 	width: 450px;
 }
+
 html, body {
     height: 100%;
     margin: 0;
@@ -80,9 +81,33 @@ html, body {
 	height: 450px;
 	overflow: auto;
 }
+/*Zone d'affichage des restos trouvés*/
+#mapInfo{
+	height: 450px;
+	overflow: auto;
+	text-align: center;
+	width: 100%;
+}
+/*Container de cette zone*/
+#mapInfoContainer{
+	padding-right: 0px;
+}
+/*Masquage des éléments du formulaire*/
+#toHide{
+	display: none;
+}
+/*Liste des restos*/
 li{
 	list-style-type: none;
 }
 #restoList{
+	padding-left: 0px;
+}
+.name{
+	font-weight: bolder;
+	padding-top: 6px;
+}
+#mapInfo, #form, #map{
 	background-color: #ffffcc;
+	box-shadow: 1px 1px 12px #555;
 }
