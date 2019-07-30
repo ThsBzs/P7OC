@@ -209,31 +209,13 @@ function addPlaceMarkers(){
 	    	for (let i = 0; i < results.length; i++) {
 	    		let place = results[i];
 	      		createMarker(results[i]);
-	      		let requestReview = {
+	      		/*let requestReview = {
 	      			placeId : results[i].id,
 	      			fields : ['name', 'formatted_address', 'rating', 'review']
-	      		};
-
-	      		let infoOpened = null;
-	      		//Ajout des infoWindows sur chaque marqueur
-	      		markers[i].addListener('click', function(){
-	      			console.log(markers);
-	      		/*	let request = {
-	      				placeId: results[i].id,
-	      				fields: ['name', 'formatted_address', 'rating', 'review']
-	      			};
-	      			service = new google.maps.places.PlacesService(map);
-					service.getDetails(request, callback);
-
-					function callback(place, status) {
-  						if (status == google.maps.places.PlacesServiceStatus.OK) {
-    						console.log(place, "OK");
-    						console.log(request);
-  						};
-					};*/
-
-					
-		    		let content = `<div class="container">
+	      		};*/
+	      		
+	      		//Préparation des infowindows
+	      		let content = `<div class="container">
 		      			<div class="row">
 			      			<div class="col-lg-5">
 			      				<img src=` + results[i].photos[0].getUrl({maxWidth: 200, maxHeight: 200}) + `>
@@ -249,15 +231,27 @@ function addPlaceMarkers(){
 		      		</div>
 		      		<br>`;
 
-					infoWindow = new google.maps.InfoWindow({
+	      		infoWindow = new google.maps.InfoWindow({
 						content : content
 					});
-					if (infoOpened != null){
-						infoOpened.close();
-					};
-					infoWindow.open(map, markers[i]);
-					infoOpened = infoWindow;
+	      		//Ajout des infoWindows sur chaque marqueur
+	      		markers[i].addListener('click', function(){
+	      		/*	let request = {
+	      				placeId: results[i].id,
+	      				fields: ['name', 'formatted_address', 'rating', 'review']
+	      			};
+	      			service = new google.maps.places.PlacesService(map);
+					service.getDetails(request, callback);
 
+					function callback(place, status) {
+  						if (status == google.maps.places.PlacesServiceStatus.OK) {
+    						console.log(place, "OK");
+    						console.log(request);
+  						};
+					};*/
+					infoWindow.setContent(content);
+					infoWindow.setPosition(markers[i].position);
+					infoWindow.open(map, markers[i]);
 				});
 
 	      		$('#restoList').append(`<div class="container">
@@ -281,7 +275,7 @@ function addPlaceMarkers(){
 	        // Browser doesn't support Geolocation
 	        handleLocationError(false, marker, map.getCenter());
 	    }
-	};
+	};//PAS TOUCHE, fin du callback des marqueurs
 
 	
 	
@@ -306,6 +300,10 @@ map.addListener('click', function(e){
     map.setCenter(pos);
 });
 
+//Fermeture des infowindows ouvertes lors du déplacement de la carte
+map.addListener('dragstart', function(){
+	infoWindow.close();
+});
 //Suppression des marqueurs lors du déplacement de la carte et ajout des nouveaux avec places
 map.addListener('dragend', function(){
 	$.each(markers, function() {
