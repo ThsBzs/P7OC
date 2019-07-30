@@ -42,7 +42,7 @@ $('#partners').click(function(e){
   e.preventDefault();
 });
 
-//*************FONCTION DE MODIFICATION DE L'AFFICHAGE
+//*************FONCTION DE MODIFICATION DE L'AFFICHAGE DOM***************************
 function changeDom(){
   if (showHome == true){
     $('#parisBox').hide().empty().append(`<div class="col-lg-10 text-center" id="parisImg" v-if="showImgText">
@@ -145,111 +145,174 @@ $('#parisBox').on("click", "#addNew", function(){
 
 /********************GESTION DE LA CARTE*************************/
 let map, infoWindow, marker, geocoder, address;
+//Création d'un array markers pour stocker les marqueurs positionnés et les effacer si besoin
+let markers = [];
 
 //**************INITIALISATION DE LA CARTE******************
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
       center: {lat: 48.874955, lng: 2.350517},
-      zoom: 12
+      zoom: 15
     });
 
+//Ajoute 'map' sur tous les marqueurs pour pouvoir les supprimer au déplacement de la carte
+function setMapOnAll(map) {
+    for (var i = 0; i < markers.length; i++) {
+        markers[i].setMap(map);
+    };
+};
 
     
 //*****************GESTION DE LA GEOLOCALISATION******************
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
-          let pos = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude
+          	let pos = {
+              	lat: position.coords.latitude,
+              	lng: position.coords.longitude
             };
-            marker = new google.maps.Marker({position: pos, map: map});
-          map.setCenter(pos);
+            marker = new google.maps.Marker({
+            	position: pos, map: map
+            });
+            markers.push(marker);
+          	map.setCenter(pos);
         }, function() {
-          handleLocationError(true, marker, map.getCenter());
+          	handleLocationError(true, marker, map.getCenter());
         });
-        //gestion de places autour du centre de la map
-        let request = {
+    };
+    
+function addPlaceMarkers(){
+	markers = [];//Mise à 0 du tableau des marqueurs, permet d'afficher les éléments places
+    //gestion de places autour du centre de la map
+    let request = {
     	location: map.center,
     	radius: '500',
     	type: ['restaurant']
-  		};
+  	};
 
   service = new google.maps.places.PlacesService(map);
   service.nearbySearch(request, callback);
-//Fonction utilisée pour ajouter des marqueurs 
-function createMarker(place) {
-        var marker = new google.maps.Marker({
-          map: map,
-          position: place.geometry.location
-        });
-}
-//Fonction d'ajout de marqueur sur chaque résultat renvoyé par places
-function callback(results, status) {
-  if (status == google.maps.places.PlacesServiceStatus.OK) {
-    for (var i = 0; i < results.length; i++) {
-      var place = results[i];
-      createMarker(results[i]);
-    }
-  }
-}
-    } else {
-        // Browser doesn't support Geolocation
-        handleLocationError(false, marker, map.getCenter());
-    }
-//Essai de récupération des marqueurs pour ajouter les restos dans la liste avec une image
-/*map.forEach(marker, function(){
-	$('#restoList').append('<span>' + )
-})*/
+	//Fonction utilisée pour ajouter des marqueurs 
+	function createMarker(place) {
+		//markers = [];
+		let image = "./images/logo2Medium.png";
+	    var marker = new google.maps.Marker({
+	        map: map,
+	        position: place.geometry.location,
+	        icon : image
+	        });
+	    markers.push(marker);
+	};
+	//Fonction d'ajout de marqueur sur chaque résultat renvoyé par places
+	function callback(results, status) {
+	  	if (status == google.maps.places.PlacesServiceStatus.OK) {
+	  		$('#restoList').empty();
+	    	for (let i = 0; i < results.length; i++) {
+	    		let place = results[i];
+	      		createMarker(results[i]);
+	      		let requestReview = {
+	      			placeId : results[i].id,
+	      			fields : ['name', 'formatted_address', 'rating', 'review']
+	      		};
 
-//Requête json sur les lieux autour d'un point.
-/*let xhr = new XMLHttpRequest()
-        xhr.open('GET', 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=48.874955,2.350517&radius=1500&type=restaurant&key=YOUR_KEY', true);
-        xhr.withCredentials = true;
-        xhr.onreadystatechange = function() {
-          if (xhr.readyState === 2) {}
-        };
-        xhr.setRequestHeader('Content-Type', 'application/json');*/
-        //xhr.send(json);
+	      		let infoOpened = null;
+	      		//Ajout des infoWindows sur chaque marqueur
+	      		markers[i].addListener('click', function(){
+	      			console.log(markers);
+	      		/*	let request = {
+	      				placeId: results[i].id,
+	      				fields: ['name', 'formatted_address', 'rating', 'review']
+	      			};
+	      			service = new google.maps.places.PlacesService(map);
+					service.getDetails(request, callback);
 
-//$.getJSON("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=48.874955,2.350517&radius=1500&type=restaurant&key=YOUR_KEY");
-//Essai d'utilisation de places
-//Choix d'un emplacement pour le centrage
-/*  let request = {
-    query: 'Faubourg Poissonière',//Recherche lancée par Google
-    fields: ['name', 'geometry'],//Dépend du résultat google
-  };
+					function callback(place, status) {
+  						if (status == google.maps.places.PlacesServiceStatus.OK) {
+    						console.log(place, "OK");
+    						console.log(request);
+  						};
+					};*/
 
-//Fonction d'ajout d'un marker, paramètre
-  function createMarker (place) {
-  let marker = new google.maps.Marker ({
-    map: map,
-    position: place.geometry.location
-  });
+					
+		    		let content = `<div class="container">
+		      			<div class="row">
+			      			<div class="col-lg-5">
+			      				<img src=` + results[i].photos[0].getUrl({maxWidth: 200, maxHeight: 200}) + `>
+			      			</div>
+			      			<div class="col-lg-7">
+			      				<li class="name">` + results[i].name + `</li> 
+			      				<li>` + results[i].vicinity + `</li> 
+			      				<li>Note moyenne : ` + results[i].rating + `</li>
+			      			</div>
+			      			<br>
+			      		</div>
+			      		<br>
+		      		</div>
+		      		<br>`;
+
+					infoWindow = new google.maps.InfoWindow({
+						content : content
+					});
+					if (infoOpened != null){
+						infoOpened.close();
+					};
+					infoWindow.open(map, markers[i]);
+					infoOpened = infoWindow;
+
+				});
+
+	      		$('#restoList').append(`<div class="container">
+	      									<div class="row">
+		      									<div class="col-lg-5">
+		      										<img src="` + results[i].photos[0].getUrl({maxWidth: 200, maxHeight: 200}) + `">
+		      									</div>
+		      									<div class="col-lg-7">
+		      										<li class="name">` + results[i].name + `</li> 
+		      										<li>` + results[i].vicinity + `</li> 
+		      										<li>Note moyenne : ` + results[i].rating + `</li>
+		      									</div>
+		      									<br>
+		      								</div>
+		      								<br>
+	      								</div>
+	      								<br>`);
+	    	}
+	    	//console.log(results[0]);
+	  	} else {
+	        // Browser doesn't support Geolocation
+	        handleLocationError(false, marker, map.getCenter());
+	    }
+	};
+
+	
+	
 };
-  let service = new google.maps.places.PlacesService(map);
 
-  service.findPlaceFromQuery(request, function(results, status) {
-    if (status === google.maps.places.PlacesServiceStatus.OK) {
-      for (let i = 0; i < results.length; i++) {
-        createMarker(results[i]);
-      }
-      map.setCenter(results[0].geometry.location);
-    }
-  });*/
-
+//***********************AJOUT / SUPPRESSION / MODIFICATION DES MARQUEURS************************************
+//Appel des marqueurs
+addPlaceMarkers();
 //Ajout d'un marqueur sur la carte lors d'un clic.FONCTIONNE
 map.addListener('click', function(e){
     $('#mapInfo').hide();
     $('#form').show();
     let pos = e.latLng;
     map.setCenter(pos);
+    let image = "./images/logo2Medium.png";
     let marker = new google.maps.Marker({
-    map: map,
-    position: pos
-  });
+	    map: map,
+	    position: pos,
+	    icon: image
+  	});
+  	markers.push(marker);
     map.setCenter(pos);
 });
 
+//Suppression des marqueurs lors du déplacement de la carte et ajout des nouveaux avec places
+map.addListener('dragend', function(){
+	$.each(markers, function() {
+		this.setMap(null);
+	});
+	addPlaceMarkers();
+});
 //Préparation d'ajout d'un marqueur sur adresse saisie
 geocoder = new google.maps.Geocoder();
 //Fonction de codage en latLng
@@ -264,9 +327,13 @@ $('#parisBox').on("click", "#sendResto", function(e){
   e.preventDefault();
 });
 
-//*******************AJOUT DES RESTOS DEPUIS LE FICHIER JSON -- FONCTIONNE***********
+
+//Gestion du clic sur les marqueurs
+
+
+//*******************AJOUT DES RESTOS DEPUIS LE FICHIER JSON -- FONCTIONNE -- A CONSERVER POUR LA SUITE***********
 // Create a script tag and set the USGS URL as the source.
-let script = document.createElement('script');
+/*let script = document.createElement('script');
 script.src = './scripts/adress2.geojson';
 document.getElementsByTagName('head')[0].appendChild(script);  
 
@@ -281,10 +348,10 @@ window.eqfeed_callback = function(results) {
           });
           function middle(elt){
           	let total = 0;
+          	let ratings = [];
           	for(j=0; j<results.features[elt].properties.ratings.length; j++){
-          		let ratings = [];
           		ratings.push(results.features[elt].properties.ratings[j].stars);
-          		console.log("ratings" + [j] + "=" + ratings);
+          		console.log("ratings=" + ratings);
           		for(k=0; k<ratings.length; k++){
           			total += ratings[k];
           		};
@@ -295,95 +362,45 @@ window.eqfeed_callback = function(results) {
           	return moyenne;
           }
           middle(i);
-          $('#restoList').append('<img src="https://maps.googleapis.com/maps/api/streetview?size=100x100&location='+ results.features[i].geometry.coordinates + '&fov=90&heading=235&pitch=10&key=YOUR_KEY&signature=YOUR_URL ><li class="name">' + results.features[i].properties.restaurantName + '</li> <li>' + results.features[i].properties.address + '</li> <li>Note moyenne :' + moyenne + '</li>');
+          //Ajout de l'image avec Google Places, renvoie pour le moment une erreur 403, vois pourquoi
+          $('#restoList').append('<!--<img src="https://maps.googleapis.com/maps/api/streetview?size=100x100&location='+ latLng + '&fov=90&heading=235&pitch=10&key=YOUR_KEY&signature=YOUR_SIGNATURE >--><li class="name">' + results.features[i].properties.restaurantName + '</li> <li>' + results.features[i].properties.address + '</li> <li>Note moyenne :' + moyenne + '</li>');
         }
-      };
+      };*/
+//*******************FIN DE L'AJOUT DES RESTOS DEPUIS JSON**************************
 
-//Ajout des infos des restos dans la liste
-
-//Préparation des éléments html à ajouter : image (selon emplacement du marqueur), note moyenne...
-/*`<div class="item">
-  <img src="https://maps.googleapis.com/maps/api/streetview?size=400x400&location=40.720032,-73.988354&fov=90&heading=235&pitch=10&key=YOUR_KEY alt="">
-  https://maps.googleapis.com/maps/api/streetview?size=400x400&location=40.720032,-73.988354&fov=90&heading=235&pitch=10&key=YOUR_KEY&signature=YOUR_URL
-  <h4> + results.features[i].properties.restaurantName + </h4>
-  <p>Note moyenne : + </p>
- </div>`*/
-//Essai d'appel à places lors du changement de position
-
-
-//Ajout des éléments post-initmap 
-//*****************FORMULAIRE D'AJOUT ET PLACES*********************
-//Gestion de l'autocomplete sur le formulaire d'ajout
-/*function initializeAutocomplete(id) {  
-  let element = document.getElementById(id);  
-  if (element) {    
-    let autocomplete = new google.maps.places.Autocomplete(element, { types: ['geocode'] });
-    google.maps.event.addListener(autocomplete, 'place_changed', onPlaceChanged);
-  }
-}
-
-//Appel des éléments place sur la position
-function onPlaceChanged() {  
-  let place = this.getPlace();
-  // console.log(place);  // Uncomment this line to view the full object returned by Google API.
-  
-  for (let i in place.address_components) {    
-    let component = place.address_components[i];    
-    
-    for (let j in component.types) {  
-      // Some types are ["country", "political"]      
-      let type_element = document.getElementById(component.types[j]);      
-      
-      if (type_element) {        
-        type_element.value = component.long_name;
-      }    
-    }  
-  }
-}*/
-
-//Lancement des fonctions quand la carte est chargée ne fonctionne pas, mis en attente
-/*google.maps.event.addDomListener(window, 'load', function() {  
-  initializeAutocomplete('user_input_autocomplete_address');
-});*/
 
 //Fonction codeAdress pour l'affichage du marker sur l'adresse saisie FONCTIONNE, PAS TOUCHE !
 function codeAddress(geocoder, map) {
-        geocoder.geocode({'address': address}, function(results, status) {
-          if (status === 'OK') {
+    geocoder.geocode({'address': address}, function(results, status) {
+        if (status === 'OK') {
             map.setCenter(results[0].geometry.location);
+            let image = "./images/logo2Medium.png";
             let marker = new google.maps.Marker({
               map: map,
-              position: results[0].geometry.location
+              position: results[0].geometry.location,
+              icon: image
             });
-            } else {
+            markers.push(marker);
+        } else {
             alert('Geocode was not successful for the following reason: ' + status);
-          }
-        });
-      };
-
-
-
-
+        }
+    });
+};
 
 //Centrage de la carte sur la position de l'utilisateur si  autorisation = ok FONCTIONNE
 function handleLocationError(browserHasGeolocation, marker, pos) {
+	let image = "./images/logo2Medium.png";
     marker = new google.maps.Marker({
             position: pos,
-            map: map
+            map: map,
+            icon: image
           });
+    markers.push(marker);
     marker.setPosition(pos);
-    marker.setContent(browserHasGeolocation ?
-                              'Erreur de géolocalisation.' :
-                              'Erreur: votre navigateur n\'accepte pas la géolocalisation.');
     marker.open(map);
-}
-
-
-
+};
 
 };//Pas touche, fin d'initMap
-
-
 //Déplacement de tous les éléments post-initMap pour accéder à google.blabla partout
 
 })//Pas touche, fin de funtion jquery
