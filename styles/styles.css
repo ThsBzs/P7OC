@@ -136,6 +136,13 @@ li{
 	font-weight: bolder;
 	padding-top: 6px;
 }
+#confirmAdd{
+	background-color: #ffffcc;
+	height: 450px;
+	text-align: center;
+	padding-top: 30%;
+	width: 100%;
+}
 #mapInfo, #form, #map{
 	background-color: #ffffcc;
 	box-shadow: 1px 1px 12px #555;

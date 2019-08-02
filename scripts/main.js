@@ -90,66 +90,48 @@ $('#parisBox').on("click", "#begin", function(){
                             	</form>
                             </div>
                     	</div>
-                      <div class="row">
-                        <div id="map"class="col-lg-6"></div>
-                        <div class="col-lg-6" id="mapInfoContainer">
-                          <div id="mapInfo">
-                           <h5>Résultat de la recherche :</h5>
-                           <div>
-                             <ul id="restoList"></ul>
-                            </div>
-                           <input type="button" class="btn btn-info" value="Ajouter" id="addNew">
-                          </div>
-                          <div id="form">
-                            <form id="addForm">
-                              <div class="form-group">
-                                <label>Addresse</label>
-                                <input id="user_input_autocomplete_address" class="form-control" placeholder="Votre adresse...">
-                              </div>
-                              <div class="form-group">
-                                <label for="Nom du restaurant">Nom:</label>
-                                <input type="text" class="form-control" id="name" placeholder="Nom du restaurant">
-                              </div>
-                              <div class="form-group" id="toHide">
-                                <label>street_number</label>
-                                <input id="street_number" name="street_number" disabled>
-                              </div>
-                              <div class="form-group" id="toHide">
-                                <label>route</label>
-                                <input id="route" name="route" disabled>
-                              </div>
-                              <div class="form-group" id="toHide">
-                                <label>locality</label>
-                                <input id="locality" name="locality" disabled>
-                              </div>
-                              <div class="form-group" id="toHide">
-                                <label>country</label>
-                                <input id="country" name="country" disabled>
-                              </div>
-                              <div class="form-group">
-                                <label for="commentaire">Commentaire:</label>
-                                <input type="text" class="form-control" id="comment" placeholder="Votre commentaire">
-                              </div>
-                              <div class="form-group">
-                                <label for="stars">Note:</label>
-                              <select class="form-control" id="stars">
-                                <option>1</option>
-                                <option>2</option>
-                                <option>3</option>
-                                <option>4</option>
-                                <option>5</option>
-                              </select>
-                            </div>
-                            <input type="submit" class="btn btn-info" id="sendResto" value="Envoyer"></input>
-                          </form> 
-                          <form>
-                          </form>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                      	<div class="row">
+                        	<div id="map"class="col-lg-6"></div>
+                        		<div class="col-lg-6" id="mapInfoContainer">
+                          			<div id="mapInfo">
+                           				<h5>Résultat de la recherche :</h5>
+                           				<div>
+                             				<ul id="restoList"></ul>
+                            			</div>
+                           				<input type="button" class="btn btn-info" value="Ajouter" id="addNew">
+                          			</div>
+                          			<div id="form">
+                            			<form id="addForm">
+	                              			<div class="form-group">
+	                                			<label>Addresse</label>
+	                                			<input id="searchTextField" type="text" size="50" placeholder="Entrez le nom ou l'adresse du restaurant que vous recherchez">
+	                              			</div>
+	                              			<div class="form-group">
+	                                			<label for="commentaire">Commentaire:</label>
+	                                			<input type="text" class="form-control" id="comment" placeholder="Votre commentaire">
+	                              			</div>
+	                              			<div class="form-group">
+	                                			<label for="stars">Note:</label>
+	                              				<select class="form-control" id="stars">
+					                                <option>1</option>
+					                                <option>2</option>
+					                                <option>3</option>
+					                                <option>4</option>
+					                                <option>5</option>
+	                              				</select>
+	                            			</div>
+	                            			<input type="button" class="btn btn-info" id="sendResto" value="Envoyer"></input>
+                          				</form> 
+                          			</div>
+                          			<div id="confirmAdd">
+                          				<p>Merci, votre avis a bien été ajouté !</p>
+                          			</div>
+                        		</div>
+                      		</div>
+                    	</div>
                   </div>`);
   $('#form').hide();
+  $('#confirmAdd').hide();
   $('#parisBox').show();
   initMap();
 });
@@ -245,22 +227,25 @@ function addPlaceMarkers(){
 	function callback(results, status) {
 	  	if (status == google.maps.places.PlacesServiceStatus.OK) {
 	  		$('#restoList').empty();
+	  		console.log(results);
 	    	for (let i = 0; i < results.length; i++) {
 	    		isEmpty = true;
 	    		//Essai d'ajout du filtre utilisateur
-	    		if(results[i].rating >= filter.value){
+	    		if(filter.value <= results[i].rating){
 	    			isEmpty = false;
 	      			createMarker(results[i]);
 	      			let photo = results[i].photos;
 	      			if (photo == undefined){
 	      				photo = "./images/logo3_alt.png";
 	      			} else {
-	      				photo = results[i].photos[0].getUrl({maxWidth: 200, maxHeight: 200});
-	      			};
+	      				//photo = results[i].photos[0].getUrl({maxWidth: 200, maxHeight: 200});
+	      				photo = results[i].vicinity;
+	      				console.log(results[i].vicinity);
+	      			};//&signature=s4PAaqh25XbBrmpa-oys6hQRpC8=
 	      			$('#restoList').append(`<div class="container">
 	      									<div class="row">
 		      									<div class="col-lg-5">
-		      										<img src="` + photo + `">
+		      										<img src="https://maps.googleapis.com/maps/api/streetview?size=200x200&location=`+ photo + `&fov=90&heading=235&pitch=10&key=YOUR_KEY">
 		      									</div>
 		      									<div class="col-lg-7">
 		      										<li class="name">` + results[i].name + `</li> 
@@ -275,6 +260,7 @@ function addPlaceMarkers(){
 	      			//Ajout des infoWindows sur chaque marqueur
 		      		if (markers[i] != undefined){//Evite les erreurs en console lors du clic sur un marqueur indéfini
 			      		markers[i].addListener('click', function(){
+			      			console.log("click");
 			      			let request2 = {
 			      				placeId: results[i].place_id,
 			      				fields: ['name', 'formatted_address', 'rating', 'review']
@@ -287,7 +273,7 @@ function addPlaceMarkers(){
 		    											.append(`<div class="container">
 			      													<div class="row" id="reviewBox">
 													      				<div class="col-lg-5">
-													      					<img src=` + photo + `>
+													      					<img src="https://maps.googleapis.com/maps/api/streetview?size=200x200&location=`+ photo + `&fov=90&heading=235&pitch=10&key=YOUR_KEY">
 													      				</div>
 													      				<div class="col-lg-7">
 													      					<ul>
@@ -313,9 +299,7 @@ function addPlaceMarkers(){
 							};
 						});//Fin du addListener sur les marqueurs
 		      		};//Fin du if sur le marqueur indéfini
-		      		console.log(markers);
 	      		};//Fin du if pour le filtre de notes
-	      		
 	    	}//Fin de la boucle d'affichage des marqueurs
 	  	} else {
 	        // Browser doesn't support Geolocation
@@ -348,10 +332,6 @@ map.addListener('doubleclick', function(e){
     map.setCenter(pos);
 });
 
-//Fermeture des infowindows ouvertes lors du déplacement de la carte
-map.addListener('dragstart', function(){
-	infoWindow.close();
-});
 //Suppression des marqueurs lors du déplacement de la carte et ajout des nouveaux avec places
 map.addListener('dragend', function(){
 	$.each(markers, function() {
@@ -359,23 +339,20 @@ map.addListener('dragend', function(){
 	});
 	addPlaceMarkers();
 });
-/*map.addListener('bounds_changed', function(){
-	$.each(markers, function() {
-		this.setMap(null);
-	});
-	addPlaceMarkers();
-});*/
+
 //Préparation d'ajout d'un marqueur sur adresse saisie
 geocoder = new google.maps.Geocoder();
 //Fonction de codage en latLng
 //Gestion du formulaire d'ajout d'adresse
-$('#parisBox').on("click", "#sendResto", function(e){
-  const addInfo = [addForm.elements.name.value, addForm.elements.address.value, addForm.elements.code.value, addForm.elements.city.value, addForm.elements.comment.value, addForm.elements.stars.value];
-  address = (addInfo[1] + ' ' + addInfo[2] + ', ' + addInfo[3]);
-  codeAddress(geocoder, map);
-  $('#restoList').append('<li>' + addInfo + '</li>' );
+$('#sendResto').click(function(e){
+function closeConfirm(){
+	$('#confirmAdd').hide();
+	$('#mapInfo').show();
+};
+  $('#mapInfo').hide();
+  $('#confirmAdd').show()
   $('#form').hide();
-  $('#mapInfo').show();
+  setTimeout(closeConfirm, 3000);
   e.preventDefault();
 });
 
@@ -415,7 +392,7 @@ window.eqfeed_callback = function(results) {
           }
           middle(i);
           //Ajout de l'image avec Google Places, renvoie pour le moment une erreur 403, vois pourquoi
-          $('#restoList').append('<!--<img src="https://maps.googleapis.com/maps/api/streetview?size=100x100&location='+ latLng + '&fov=90&heading=235&pitch=10&key=YOUR_KEY&signature=s4PAaqh25XbBrmpa-oys6hQRpC8= >--><li class="name">' + results.features[i].properties.restaurantName + '</li> <li>' + results.features[i].properties.address + '</li> <li>Note moyenne :' + moyenne + '</li>');
+          $('#restoList').append('<!--<img src="https://maps.googleapis.com/maps/api/streetview?size=100x100&location='+ latLng + '&fov=90&heading=235&pitch=10&key=YOUR_KEY&signature=YOUR_SIGNATURE>--><li class="name">' + results.features[i].properties.restaurantName + '</li> <li>' + results.features[i].properties.address + '</li> <li>Note moyenne :' + moyenne + '</li>');
         }
       };*/
 //*******************FIN DE L'AJOUT DES RESTOS DEPUIS JSON**************************
