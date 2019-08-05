@@ -8,36 +8,27 @@ let showHome = true,
 changeDom();
 
 //Essai de fonction pour true/false, ne marche pas
-/*function trueFalse(elt){
+function trueFalse(){
   showHome = false;
   showAbout = false;
   showPartners = false;
-  elt = true;
-};*/
+  return true;
+};
 
 $('#home').click(function(e){
-  /*trueFalse(showHome);*/
-  showHome = true;
-  showAbout = false;
-  showPartners = false;
+  showHome = trueFalse();
   changeDom();
   e.preventDefault();
 });
 
 $('#about').click(function(e){
-  /*trueFalse(showAbout);*/
-  showHome = false;
-  showAbout =true;
-  showPartners = false;
+  showAbout = trueFalse();
   changeDom();
   e.preventDefault();
 });
 
 $('#partners').click(function(e){
-  /*trueFalse(showPartners);*/
-  showHome = false;
-  showAbout = false;
-  showPartners = true;
+  showPartners = trueFalse();
   changeDom();
   e.preventDefault();
 });
@@ -228,9 +219,10 @@ function addPlaceMarkers(){
 	  	if (status == google.maps.places.PlacesServiceStatus.OK) {
 	  		$('#restoList').empty();
 	  		console.log(results);
+	  		console.log(markers);
 	    	for (let i = 0; i < results.length; i++) {
 	    		isEmpty = true;
-	    		//Essai d'ajout du filtre utilisateur
+	    		//Ajout du filtre utilisateur
 	    		if(filter.value <= results[i].rating){
 	    			isEmpty = false;
 	      			createMarker(results[i]);
@@ -238,10 +230,8 @@ function addPlaceMarkers(){
 	      			if (photo == undefined){
 	      				photo = "./images/logo3_alt.png";
 	      			} else {
-	      				//photo = results[i].photos[0].getUrl({maxWidth: 200, maxHeight: 200});
 	      				photo = results[i].vicinity;
-	      				console.log(results[i].vicinity);
-	      			};//&signature=s4PAaqh25XbBrmpa-oys6hQRpC8=
+	      			};
 	      			$('#restoList').append(`<div class="container">
 	      									<div class="row">
 		      									<div class="col-lg-5">
@@ -258,9 +248,8 @@ function addPlaceMarkers(){
 	      								</div>
 	      								<br>`);
 	      			//Ajout des infoWindows sur chaque marqueur
-		      		if (markers[i] != undefined){//Evite les erreurs en console lors du clic sur un marqueur indéfini
+		      		//if (markers[i] != undefined){//Evite les erreurs en console lors du clic sur un marqueur indéfini
 			      		markers[i].addListener('click', function(){
-			      			console.log("click");
 			      			let request2 = {
 			      				placeId: results[i].place_id,
 			      				fields: ['name', 'formatted_address', 'rating', 'review']
@@ -294,11 +283,10 @@ function addPlaceMarkers(){
 		    							$('#reviewMask').fadeOut();
 		    						});
 		  						} else {
-		  							console.log(status);
 		  						};
 							};
 						});//Fin du addListener sur les marqueurs
-		      		};//Fin du if sur le marqueur indéfini
+		      		//};//Fin du if sur le marqueur indéfini
 	      		};//Fin du if pour le filtre de notes
 	    	}//Fin de la boucle d'affichage des marqueurs
 	  	} else {
@@ -342,7 +330,6 @@ map.addListener('dragend', function(){
 
 //Préparation d'ajout d'un marqueur sur adresse saisie
 geocoder = new google.maps.Geocoder();
-//Fonction de codage en latLng
 //Gestion du formulaire d'ajout d'adresse
 $('#sendResto').click(function(e){
 function closeConfirm(){
@@ -392,7 +379,7 @@ window.eqfeed_callback = function(results) {
           }
           middle(i);
           //Ajout de l'image avec Google Places, renvoie pour le moment une erreur 403, vois pourquoi
-          $('#restoList').append('<!--<img src="https://maps.googleapis.com/maps/api/streetview?size=100x100&location='+ latLng + '&fov=90&heading=235&pitch=10&key=YOUR_KEY&signature=YOUR_SIGNATURE>--><li class="name">' + results.features[i].properties.restaurantName + '</li> <li>' + results.features[i].properties.address + '</li> <li>Note moyenne :' + moyenne + '</li>');
+          $('#restoList').append('<!--<img src="https://maps.googleapis.com/maps/api/streetview?size=100x100&location='+ latLng + '&fov=90&heading=235&pitch=10&key=YOUR_KEY&signature=sYOUR_SIGNATURE>--><li class="name">' + results.features[i].properties.restaurantName + '</li> <li>' + results.features[i].properties.address + '</li> <li>Note moyenne :' + moyenne + '</li>');
         }
       };*/
 //*******************FIN DE L'AJOUT DES RESTOS DEPUIS JSON**************************
