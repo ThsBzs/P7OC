@@ -85,7 +85,7 @@ $('#parisBox').on("click", "#begin", function(){
                         	<div id="map"class="col-lg-6"></div>
                         		<div class="col-lg-6" id="mapInfoContainer">
                           			<div id="mapInfo">
-                           				<h5>Résultat de la recherche :</h5>
+                           				<h5>Résultat(s) de la recherche :</h5>
                            				<div>
                              				<ul id="restoList"></ul>
                             			</div>
@@ -95,7 +95,7 @@ $('#parisBox').on("click", "#begin", function(){
                             			<form id="addForm">
 	                              			<div class="form-group">
 	                                			<label>Addresse</label>
-	                                			<input id="searchTextField" type="text" size="50" placeholder="Entrez le nom ou l'adresse du restaurant que vous recherchez">
+	                                			<input id="searchTextField" type="text" size="50" placeholder="Saisissez votre recherche">
 	                              			</div>
 	                              			<div class="form-group">
 	                                			<label for="commentaire">Commentaire:</label>
@@ -160,6 +160,9 @@ function setMapOnAll(map) {
               	lat: position.coords.latitude,
               	lng: position.coords.longitude
             };
+            $.each(markers, function() {
+				this.setMap(null);
+			});
             let image = "./images/logo2Medium.png";
             marker = new google.maps.Marker({
             	position: pos, 
@@ -191,6 +194,77 @@ $('#sendFilter').click(function(e){
 	      			};
 	e.preventDefault();
 });
+
+//Centrage de la carte sur la position de l'utilisateur si  autorisation = ok 
+function handleLocationError(browserHasGeolocation, marker, pos) {
+	let image = "./images/logo2Medium.png";
+    marker = new google.maps.Marker({
+            position: pos,
+            map: map,
+            icon: image
+          });
+    markers.push(marker);
+    marker.setPosition(pos);
+};
+
+function createMarker(place) {
+	//markers = [];
+	let image = "./images/logo2Medium.png";
+	let marker = new google.maps.Marker({
+	    map: map,
+	    position: place.geometry.location,
+	    icon : image,
+	    visible : false
+	});
+	markers.push(marker);
+};
+
+//Affichage des restos dans la liste de droite
+function showResults(photo, name, vicinity, rating){
+	$('#restoList').append(`<div class="container">
+		      									<div class="row">
+			    									<div class="col-lg-5">
+			     										<img src="https://maps.googleapis.com/maps/api/streetview?size=200x200&location=` + photo + `&fov=90&heading=235&pitch=10&key=YOUR_KEY">
+			     									</div>
+			      									<div class="col-lg-7">
+			      										<li class="name">` + name + `</li> 
+			      										<li>` + vicinity + `</li> 
+			      										<li>Note moyenne : ` + rating + `</li>
+			      									</div>
+			      									<br>
+			      								</div>
+			      								<br>
+		      								</div>
+		      								<br>`);
+};
+//Affichage des infos complémentaires
+function showReview(photo, name, address, author, text){
+	$('#reviewMask').empty()
+		.append(`<div class="container">
+					<div class="row" id="reviewBox">
+						<div class="col-lg-5">
+							<img src="https://maps.googleapis.com/maps/api/streetview?size=200x200&location=`+ photo + `&fov=90&heading=235&pitch=10&key=YOUR_KEY">
+						</div>
+						<div class="col-lg-7">
+							<ul>
+								<li class="name">` + name + `</li> 
+								<li>` + address + `</li> 
+								<li>Auteur-e : ` + author + `</li>
+								<li>Commentaire(s) : ` + text + `</li>
+							</ul>
+						</div>
+						<input type="submit" class="btn btn-info" id="closeReview" value="Fermer"></input>
+						<br>
+					</div>
+					<br>
+				</div>
+				<br>`)
+				.fadeIn();
+	$('#closeReview').click(function(){
+		$('#reviewMask').fadeOut();
+	});
+};
+
 function addPlaceMarkers(){
 	markers = [];//Mise à 0 du tableau des marqueurs, permet d'afficher les éléments places
     //gestion de places autour du centre de la map
@@ -203,90 +277,40 @@ function addPlaceMarkers(){
   service = new google.maps.places.PlacesService(map);
   service.nearbySearch(request, callback);
 	//Fonction utilisée pour ajouter des marqueurs 
-	function createMarker(place) {
-		//markers = [];
-		let image = "./images/logo2Medium.png";
-	    var marker = new google.maps.Marker({
-	        map: map,
-	        position: place.geometry.location,
-	        icon : image
-	        });
-	    markers.push(marker);
-	};
+
 
 	//Fonction d'ajout de marqueur sur chaque résultat renvoyé par places
 	function callback(results, status) {
 	  	if (status == google.maps.places.PlacesServiceStatus.OK) {
 	  		$('#restoList').empty();
-	  		console.log(results);
-	  		console.log(markers);
 	    	for (let i = 0; i < results.length; i++) {
 	    		isEmpty = true;
 	    		//Ajout du filtre utilisateur
-	    		if(filter.value <= results[i].rating){
-	    			isEmpty = false;
-	      			createMarker(results[i]);
-	      			let photo = results[i].photos;
-	      			if (photo == undefined){
-	      				photo = "./images/logo3_alt.png";
-	      			} else {
-	      				photo = results[i].vicinity;
-	      			};
-	      			$('#restoList').append(`<div class="container">
-	      									<div class="row">
-		      									<div class="col-lg-5">
-		      										<img src="https://maps.googleapis.com/maps/api/streetview?size=200x200&location=`+ photo + `&fov=90&heading=235&pitch=10&key=YOUR_KEY">
-		      									</div>
-		      									<div class="col-lg-7">
-		      										<li class="name">` + results[i].name + `</li> 
-		      										<li>` + results[i].vicinity + `</li> 
-		      										<li>Note moyenne : ` + results[i].rating + `</li>
-		      									</div>
-		      									<br>
-		      								</div>
-		      								<br>
-	      								</div>
-	      								<br>`);
-	      			//Ajout des infoWindows sur chaque marqueur
-		      		//if (markers[i] != undefined){//Evite les erreurs en console lors du clic sur un marqueur indéfini
-			      		markers[i].addListener('click', function(){
-			      			let request2 = {
-			      				placeId: results[i].place_id,
-			      				fields: ['name', 'formatted_address', 'rating', 'review']
-			      			};
-			      			let service = new google.maps.places.PlacesService(map);
-							service.getDetails(request2, callback);
-							function callback(place, status) {
-		  						if (status == google.maps.places.PlacesServiceStatus.OK) {
-		    						$('#reviewMask').empty()
-		    											.append(`<div class="container">
-			      													<div class="row" id="reviewBox">
-													      				<div class="col-lg-5">
-													      					<img src="https://maps.googleapis.com/maps/api/streetview?size=200x200&location=`+ photo + `&fov=90&heading=235&pitch=10&key=YOUR_KEY">
-													      				</div>
-													      				<div class="col-lg-7">
-													      					<ul>
-													      						<li class="name">` + place.name + `</li> 
-													      						<li>` + place.formatted_address + `</li> 
-													      						<li>Commentaires : ` +  place.reviews[0].author_name + `</li>
-													      						<li>Commentaires : ` +  place.reviews[0].text + `</li>
-													      					</ul>
-													      				</div>
-													      				<input type="submit" class="btn btn-info" id="closeReview" value="Fermer"></input>
-													      				<br>
-													      			</div>
-													      			<br>
-												      			</div>
-												      			<br>`)
-		    														.fadeIn();
-		    						$('#closeReview').click(function(){
-		    							$('#reviewMask').fadeOut();
-		    						});
-		  						} else {
-		  						};
-							};
-						});//Fin du addListener sur les marqueurs
-		      		//};//Fin du if sur le marqueur indéfini
+	    		isEmpty = false;
+	      		createMarker(results[i]);
+	      		if(filter.value <= results[i].rating){
+	      			markers[i].setVisible(true);
+		      		let photo = results[i].photos;
+		      		if (photo == undefined){
+		      			photo = "./images/logo3_alt.png";
+		      		} else {
+		      			photo = results[i].vicinity;
+		      		};
+		      		showResults(photo, results[i].name, results[i].vicinity, results[i].rating);
+		      		//Ajout des informations complémentaires sur les marqueurs
+				    markers[i].addListener('click', function(){
+				      	let request2 = {
+				      		placeId: results[i].place_id,
+				      		fields: ['name', 'formatted_address', 'rating', 'review']
+				      	};
+				      	let service = new google.maps.places.PlacesService(map);
+						service.getDetails(request2, callback);
+						function callback(place, status) {
+			  				if (status == google.maps.places.PlacesServiceStatus.OK) {
+			    				showReview(place.name, place.formatted_address, place.reviews[0].author_name, place.reviews[0].text);
+			  				};
+						};//Fin du callback getDetails
+					});//Fin du addListener sur les marqueurs
 	      		};//Fin du if pour le filtre de notes
 	    	}//Fin de la boucle d'affichage des marqueurs
 	  	} else {
@@ -295,11 +319,7 @@ function addPlaceMarkers(){
 	    };
 	    return isEmpty;
 	};//Fin du callback des marqueurs
-	
-
-	
-	
-};
+};//Fin d'addPlaceMarkers
 
 //***********************AJOUT / SUPPRESSION / MODIFICATION DES MARQUEURS************************************
 //Appel des marqueurs
@@ -331,7 +351,11 @@ map.addListener('dragend', function(){
 //Préparation d'ajout d'un marqueur sur adresse saisie
 geocoder = new google.maps.Geocoder();
 //Gestion du formulaire d'ajout d'adresse
+let userRating, userComment;
 $('#sendResto').click(function(e){
+	const userForm = document.getElementById('addForm');
+	userRating = userForm.elements.stars;
+	userComment = userForm.elements.comment.value;
 function closeConfirm(){
 	$('#confirmAdd').hide();
 	$('#mapInfo').show();
@@ -343,9 +367,32 @@ function closeConfirm(){
   e.preventDefault();
 });
 
+let input = document.getElementById('searchTextField');
+let options = {
+	types : ['establishment'],
+	componentRestrictions: {country: 'fr'},
+	fields: ['place_id', 'name', 'formatted_address', 'vicinity', 'rating']
+};
 
-//Gestion du clic sur les marqueurs
-
+let autoComplete = new google.maps.places.Autocomplete(input, options);
+autoComplete.addListener('place_changed', function(){
+	let result = autoComplete.getPlace();
+	function codeAdress(){
+		geocoder.geocode({'placeId' : result.place_id}, function(results, status){
+			if(status == 'OK'){
+				markers = [];
+				map.setCenter(results[0].geometry.location);
+				createMarker(results[0]);
+				markers[0].setVisible(true);
+				markers[0].addListener('click', function(){
+					showReview(result.vicinity, result.name, result.formatted_address, 'Restocalize', userComment);
+				});
+				showResults(result.vicinity, result.name, result.vicinity, result.rating);
+			};
+		});
+	};
+	codeAdress();
+})
 
 //*******************AJOUT DES RESTOS DEPUIS LE FICHIER JSON -- FONCTIONNE -- A CONSERVER POUR LA SUITE***********
 // Create a script tag and set the USGS URL as the source.
@@ -379,45 +426,10 @@ window.eqfeed_callback = function(results) {
           }
           middle(i);
           //Ajout de l'image avec Google Places, renvoie pour le moment une erreur 403, vois pourquoi
-          $('#restoList').append('<!--<img src="https://maps.googleapis.com/maps/api/streetview?size=100x100&location='+ latLng + '&fov=90&heading=235&pitch=10&key=YOUR_KEY&signature=sYOUR_SIGNATURE>--><li class="name">' + results.features[i].properties.restaurantName + '</li> <li>' + results.features[i].properties.address + '</li> <li>Note moyenne :' + moyenne + '</li>');
+          $('#restoList').append('<!--<img src="https://maps.googleapis.com/maps/api/streetview?size=100x100&location='+ latLng + '&fov=90&heading=235&pitch=10&key=YOUR_KEY&signature=YOUR_SIGNATURE>--><li class="name">' + results.features[i].properties.restaurantName + '</li> <li>' + results.features[i].properties.address + '</li> <li>Note moyenne :' + moyenne + '</li>');
         }
       };*/
 //*******************FIN DE L'AJOUT DES RESTOS DEPUIS JSON**************************
 
-
-//Fonction codeAdress pour l'affichage du marker sur l'adresse saisie FONCTIONNE, PAS TOUCHE !
-function codeAddress(geocoder, map) {
-    geocoder.geocode({'address': address}, function(results, status) {
-        if (status === 'OK') {
-            map.setCenter(results[0].geometry.location);
-            let image = "./images/logo2Medium.png";
-            let marker = new google.maps.Marker({
-              map: map,
-              position: results[0].geometry.location,
-              icon: image
-            });
-            markers.push(marker);
-        } else {
-            alert('Geocode was not successful for the following reason: ' + status);
-        }
-    });
-};
-
-//Centrage de la carte sur la position de l'utilisateur si  autorisation = ok FONCTIONNE
-function handleLocationError(browserHasGeolocation, marker, pos) {
-	let image = "./images/logo2Medium.png";
-    marker = new google.maps.Marker({
-            position: pos,
-            map: map,
-            icon: image
-          });
-    markers.push(marker);
-    marker.setPosition(pos);
-    marker.open(map);
-};
-
 };//Pas touche, fin d'initMap
-//Déplacement de tous les éléments post-initMap pour accéder à google.blabla partout
-
-})//Pas touche, fin de funtion jquery
-
+})//Pas touche, fin de function jquery

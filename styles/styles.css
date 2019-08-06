@@ -140,8 +140,10 @@ li{
 	background-color: #ffffcc;
 	height: 450px;
 	text-align: center;
-	padding-top: 30%;
 	width: 100%;
+}
+#confirmAdd p{
+	padding-top: 40% !important;
 }
 #mapInfo, #form, #map{
 	background-color: #ffffcc;
