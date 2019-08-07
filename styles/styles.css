@@ -101,6 +101,14 @@ html, body {
     background-color: rgba(0,0,0,0.7);
 	display: none;
 }
+#resultBox{
+	text-align: center;
+    padding: 10px 10px;
+}
+#resultBox:hover{
+	background-color: #ffff99 !important ;
+	cursor: pointer;
+}
 #reviewBox{
 	background-color: white;
     margin: 250px 150px; ;

@@ -15,19 +15,19 @@ function trueFalse(){
   return true;
 };
 
-$('#home').click(function(e){
+$('#showHome').click(function(e){
   showHome = trueFalse();
   changeDom();
   e.preventDefault();
 });
 
-$('#about').click(function(e){
+$('#showAbout').click(function(e){
   showAbout = trueFalse();
   changeDom();
   e.preventDefault();
 });
 
-$('#partners').click(function(e){
+$('#showPartners').click(function(e){
   showPartners = trueFalse();
   changeDom();
   e.preventDefault();
@@ -111,7 +111,8 @@ $('#parisBox').on("click", "#begin", function(){
 					                                <option>5</option>
 	                              				</select>
 	                            			</div>
-	                            			<input type="button" class="btn btn-info" id="sendResto" value="Envoyer"></input>
+	                            			<input type="button" class="btn btn-success" id="sendResto" value="Envoyer"></input>
+	                            			<input type="button" class="btn btn-danger" id="cancel" value="Annuler"></input>
                           				</form> 
                           			</div>
                           			<div id="confirmAdd">
@@ -152,7 +153,6 @@ function setMapOnAll(map) {
     };
 };
 
-    
 //*****************GESTION DE LA GEOLOCALISATION******************
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
@@ -186,12 +186,6 @@ $('#sendFilter').click(function(e){
 		this.setMap(null);
 	});
 	addPlaceMarkers();
-	if (isEmpty == true){
-	      			$('#restoList').append(`<li>Désolé, aucun restaurant ne correspond à votre recherche.</li>
-	      										<br>
-	      										<li>Peut-être pourriez-vous essayer de changer de secteur, ou de modifier la note minimum ?</li>`);
-	      				console.log("rien à afficher");
-	      			};
 	e.preventDefault();
 });
 
@@ -208,7 +202,6 @@ function handleLocationError(browserHasGeolocation, marker, pos) {
 };
 
 function createMarker(place) {
-	//markers = [];
 	let image = "./images/logo2Medium.png";
 	let marker = new google.maps.Marker({
 	    map: map,
@@ -220,22 +213,22 @@ function createMarker(place) {
 };
 
 //Affichage des restos dans la liste de droite
-function showResults(photo, name, vicinity, rating){
-	$('#restoList').append(`<div class="container">
-		      									<div class="row">
-			    									<div class="col-lg-5">
-			     										<img src="https://maps.googleapis.com/maps/api/streetview?size=200x200&location=` + photo + `&fov=90&heading=235&pitch=10&key=YOUR_KEY">
-			     									</div>
-			      									<div class="col-lg-7">
-			      										<li class="name">` + name + `</li> 
-			      										<li>` + vicinity + `</li> 
-			      										<li>Note moyenne : ` + rating + `</li>
-			      									</div>
-			      									<br>
-			      								</div>
-			      								<br>
-		      								</div>
-		      								<br>`);
+function showResults(id, photo, name, vicinity, rating){
+	$('#restoList').append(`<div class="container" id="resultBox">
+								<div class="row" id="` + id +  `">
+			    					<div class="col-lg-5">
+			     						<img src="https://maps.googleapis.com/maps/api/streetview?size=200x200&location=` + photo + `&fov=90&heading=235&pitch=10&key=YOUR_KEY">
+			     					</div>
+			      					<div class="col-lg-7">
+			      						<li class="name">` + name + `</li> 
+			     						<li>` + vicinity + `</li> 
+			   							<li>Note moyenne : ` + rating + `</li>
+									</div>
+									<br>
+  								</div>
+   								<br>
+   							</div>
+		      				<br>`);
 };
 //Affichage des infos complémentaires
 function showReview(photo, name, address, author, text){
@@ -284,11 +277,10 @@ function addPlaceMarkers(){
 	  	if (status == google.maps.places.PlacesServiceStatus.OK) {
 	  		$('#restoList').empty();
 	    	for (let i = 0; i < results.length; i++) {
-	    		isEmpty = true;
 	    		//Ajout du filtre utilisateur
-	    		isEmpty = false;
 	      		createMarker(results[i]);
 	      		if(filter.value <= results[i].rating){
+	      			//Affichage des marqueurs correspondants au filtre
 	      			markers[i].setVisible(true);
 		      		let photo = results[i].photos;
 		      		if (photo == undefined){
@@ -296,10 +288,10 @@ function addPlaceMarkers(){
 		      		} else {
 		      			photo = results[i].vicinity;
 		      		};
-		      		showResults(photo, results[i].name, results[i].vicinity, results[i].rating);
+		      		showResults(i, photo, results[i].name, results[i].vicinity, results[i].rating);
 		      		//Ajout des informations complémentaires sur les marqueurs
-				    markers[i].addListener('click', function(){
-				      	let request2 = {
+		      		function showDetails(){
+		      			let request2 = {
 				      		placeId: results[i].place_id,
 				      		fields: ['name', 'formatted_address', 'rating', 'review']
 				      	};
@@ -307,23 +299,45 @@ function addPlaceMarkers(){
 						service.getDetails(request2, callback);
 						function callback(place, status) {
 			  				if (status == google.maps.places.PlacesServiceStatus.OK) {
-			    				showReview(place.name, place.formatted_address, place.reviews[0].author_name, place.reviews[0].text);
+			    				showReview(photo, place.name, place.formatted_address, place.reviews[0].author_name, place.reviews[0].text);
 			  				};
 						};//Fin du callback getDetails
-					});//Fin du addListener sur les marqueurs
+		      		};
+				    markers[i].addListener('click', function(){
+				      	showDetails();
+					});
+					//Ajout d'une animation sur les marqueurs lors du passage de la souris sur un résultat
+					let list = document.getElementById(i);
+					$(list).mouseover(function(){
+						markers[i].setAnimation(google.maps.Animation.BOUNCE);
+						setTimeout(function(){ markers[i].setAnimation(null); }, 750);
+					});
+					$(list).click(function(){
+						showDetails();
+					});
+					markers[i].addListener('mouseover', function(){
+						$(list).css('background-color', '#ffff99');
+					});
+					markers[i].addListener('mouseout', function(){
+						$(list).css("background-color", "");;
+					});
 	      		};//Fin du if pour le filtre de notes
 	    	}//Fin de la boucle d'affichage des marqueurs
 	  	} else {
 	        // Browser doesn't support Geolocation
 	        handleLocationError(false, marker, map.getCenter());
 	    };
-	    return isEmpty;
+	    //Affichage d'un message si rien à afficher
+		      		let check = document.getElementById('resultBox');
+	  				if(check == null){
+	      				$('#restoList').append(`<li>Désolé, aucun restaurant ne correspond à votre recherche.</li>
+	      								<br>
+	      								<li>Peut-être pourriez-vous essayer de changer de secteur, ou de modifier la note minimum ?</li>`);
+	  				};
 	};//Fin du callback des marqueurs
 };//Fin d'addPlaceMarkers
 
 //***********************AJOUT / SUPPRESSION / MODIFICATION DES MARQUEURS************************************
-//Appel des marqueurs
-//addPlaceMarkers();
 //Ajout d'un marqueur sur la carte lors d'un clic.FONCTIONNE
 map.addListener('doubleclick', function(e){
     $('#mapInfo').hide();
@@ -351,20 +365,25 @@ map.addListener('dragend', function(){
 //Préparation d'ajout d'un marqueur sur adresse saisie
 geocoder = new google.maps.Geocoder();
 //Gestion du formulaire d'ajout d'adresse
-let userRating, userComment;
-$('#sendResto').click(function(e){
-	const userForm = document.getElementById('addForm');
-	userRating = userForm.elements.stars;
-	userComment = userForm.elements.comment.value;
 function closeConfirm(){
 	$('#confirmAdd').hide();
 	$('#mapInfo').show();
 };
-  $('#mapInfo').hide();
-  $('#confirmAdd').show()
+
+let userRating, userComment;
+$('#sendResto').click(function(e){
+const userForm = document.getElementById('addForm');
+	userRating = userForm.elements.stars;
+	userComment = userForm.elements.comment.value;
+  	$('#mapInfo').hide();
+  	$('#confirmAdd').show()
+  	$('#form').hide();
+  	setTimeout(closeConfirm, 3000);
+  	e.preventDefault();
+});
+$('#cancel').click(function(e){
+	  $('#mapInfo').show();
   $('#form').hide();
-  setTimeout(closeConfirm, 3000);
-  e.preventDefault();
 });
 
 let input = document.getElementById('searchTextField');
@@ -392,7 +411,7 @@ autoComplete.addListener('place_changed', function(){
 		});
 	};
 	codeAdress();
-})
+});
 
 //*******************AJOUT DES RESTOS DEPUIS LE FICHIER JSON -- FONCTIONNE -- A CONSERVER POUR LA SUITE***********
 // Create a script tag and set the USGS URL as the source.
@@ -414,13 +433,11 @@ window.eqfeed_callback = function(results) {
           	let ratings = [];
           	for(j=0; j<results.features[elt].properties.ratings.length; j++){
           		ratings.push(results.features[elt].properties.ratings[j].stars);
-          		console.log("ratings=" + ratings);
           		for(k=0; k<ratings.length; k++){
           			total += ratings[k];
           		};
           		let long = ratings.length;
           		moyenne = (total/long);
-          		console.log("moyenne = " + moyenne);
           	}
           	return moyenne;
           }
