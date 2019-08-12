@@ -1,4 +1,3 @@
-
 $(function(){
 
 let showHome = true,
@@ -59,7 +58,7 @@ function changeDom(){
  /*Gestion du clic sur le bouton de lancement*/
 $('#parisBox').on("click", "#begin", function(){
   $('#parisBox').hide().empty().append(`<div id="explain" class="col-lg-12">
-                    <p>Pour consulter les restaurants dans votre secteur, merci d'autoriser l'accès à la position ou la localisation pour votre navigateur. Promis, nous ne viendrons pas sonner chez vous ! <br>
+                    <p>Pour consulter les restaurants dans votre secteur, merci d'autoriser l'accès à la position ou la localisation pour votre navigateur. Promis, nous ne viendrons pas sonner chez vous !<br>
                     Vous pouvez filtrer les résultats en fonction des notes attribuées par nos utilisateurs.</p> 
                     <br>
                     <p>Si vous souhaitez ajouter un restaurant, cliquez sur "Ajouter" en bas de la liste, et laissez-vous guider.</p>
@@ -83,45 +82,45 @@ $('#parisBox').on("click", "#begin", function(){
                     	</div>
                       	<div class="row">
                         	<div id="map"class="col-lg-6"></div>
-                        		<div class="col-lg-6" id="mapInfoContainer">
-                          			<div id="mapInfo">
-                           				<h5>Résultat(s) de la recherche :</h5>
-                           				<div>
-                             				<ul id="restoList"></ul>
-                            			</div>
-                           				<input type="button" class="btn btn-info" value="Ajouter" id="addNew">
-                          			</div>
-                          			<div id="form">
-                            			<form id="addForm">
-	                              			<div class="form-group">
-	                                			<label>Addresse</label>
-	                                			<input id="searchTextField" type="text" size="50" placeholder="Saisissez votre recherche">
-	                              			</div>
-	                              			<div class="form-group">
-	                                			<label for="commentaire">Commentaire:</label>
-	                                			<input type="text" class="form-control" id="comment" placeholder="Votre commentaire">
-	                              			</div>
-	                              			<div class="form-group">
-	                                			<label for="stars">Note:</label>
-	                              				<select class="form-control" id="stars">
-					                                <option>1</option>
-					                                <option>2</option>
-					                                <option>3</option>
-					                                <option>4</option>
-					                                <option>5</option>
-	                              				</select>
-	                            			</div>
-	                            			<input type="button" class="btn btn-success" id="sendResto" value="Envoyer"></input>
-	                            			<input type="button" class="btn btn-danger" id="cancel" value="Annuler"></input>
-                          				</form> 
-                          			</div>
-                          			<div id="confirmAdd">
-                          				<p>Merci, votre avis a bien été ajouté !</p>
-                          			</div>
-                        		</div>
-                      		</div>
-                    	</div>
-                  </div>`);
+                        	<div class="col-lg-6" id="mapInfoContainer">
+                          		<div id="mapInfo">
+                           			<h5>Résultat(s) de la recherche :</h5>
+                           			<div>
+                            			<ul id="restoList"></ul>
+                            		</div>
+                           			<input type="button" class="btn btn-info" value="Ajouter" id="addNew">
+                          		</div>
+                          		<div id="form">
+                            		<form id="addForm">
+	                             		<div class="form-group">
+	                               			<label>Addresse</label>
+	                               			<input id="searchTextField" type="text" size="50" placeholder="Saisissez votre recherche">
+	                              		</div>
+	                              		<div class="form-group">
+	                                		<label for="commentaire">Commentaire:</label>
+	                                		<input type="text" class="form-control" id="comment" placeholder="Votre commentaire">
+	                              		</div>
+	                              		<div class="form-group">
+	                                		<label for="stars">Note:</label>
+	                              			<select class="form-control" id="stars">
+												<option>1</option>
+												<option>2</option>
+												<option>3</option>
+												<option>4</option>
+												<option>5</option>
+	                              			</select>
+	                            		</div>
+	                            		<input type="button" class="btn btn-success" id="sendResto" value="Envoyer"></input>
+	                            		<input type="button" class="btn btn-danger" id="cancel" value="Annuler"></input>
+                          			</form> 
+                          		</div>
+                          		<div id="confirmAdd">
+                          			<p>Merci, votre avis a bien été ajouté !</p>
+                          		</div>
+                        	</div>
+                      	</div>
+                    </div>
+                </div>`);
   $('#form').hide();
   $('#confirmAdd').hide();
   $('#parisBox').show();
@@ -130,8 +129,11 @@ $('#parisBox').on("click", "#begin", function(){
 
 //Gestion du clic sur le bouton d'ajout
 $('#parisBox').on("click", "#addNew", function(){
-  $('#mapInfo').hide();
-  $('#form').show();
+	$.each(markers, function() {
+		this.setMap(null);
+	});
+ 	$('#mapInfo').hide();
+  	$('#form').show();
 });
 
 /********************GESTION DE LA CARTE*************************/
@@ -145,13 +147,6 @@ function initMap() {
       center: {lat: 48.874955, lng: 2.350517},
       zoom: 15
     });
-
-//Ajoute 'map' sur tous les marqueurs pour pouvoir les supprimer au déplacement de la carte
-function setMapOnAll(map) {
-    for (var i = 0; i < markers.length; i++) {
-        markers[i].setMap(map);
-    };
-};
 
 //*****************GESTION DE LA GEOLOCALISATION******************
     if (navigator.geolocation) {
@@ -231,7 +226,7 @@ function showResults(id, photo, name, vicinity, rating){
 		      				<br>`);
 };
 //Affichage des infos complémentaires
-function showReview(photo, name, address, author, text){
+function showReview(photo, name, address, author, rating, text){
 	$('#reviewMask').empty()
 		.append(`<div class="container">
 					<div class="row" id="reviewBox">
@@ -243,6 +238,7 @@ function showReview(photo, name, address, author, text){
 								<li class="name">` + name + `</li> 
 								<li>` + address + `</li> 
 								<li>Auteur-e : ` + author + `</li>
+								<li>Note : ` + rating + `</li>
 								<li>Commentaire(s) : ` + text + `</li>
 							</ul>
 						</div>
@@ -267,10 +263,8 @@ function addPlaceMarkers(){
     	type: ['restaurant']
   	};
 
-  service = new google.maps.places.PlacesService(map);
-  service.nearbySearch(request, callback);
-	//Fonction utilisée pour ajouter des marqueurs 
-
+  	service = new google.maps.places.PlacesService(map);
+  	service.nearbySearch(request, callback);
 
 	//Fonction d'ajout de marqueur sur chaque résultat renvoyé par places
 	function callback(results, status) {
@@ -299,7 +293,7 @@ function addPlaceMarkers(){
 						service.getDetails(request2, callback);
 						function callback(place, status) {
 			  				if (status == google.maps.places.PlacesServiceStatus.OK) {
-			    				showReview(photo, place.name, place.formatted_address, place.reviews[0].author_name, place.reviews[0].text);
+			    				showReview(photo, place.name, place.formatted_address, place.reviews[0].author_name, place.reviews[0].rating, place.reviews[0].text);
 			  				};
 						};//Fin du callback getDetails
 		      		};
@@ -332,14 +326,14 @@ function addPlaceMarkers(){
 	  				if(check == null){
 	      				$('#restoList').append(`<li>Désolé, aucun restaurant ne correspond à votre recherche.</li>
 	      								<br>
-	      								<li>Peut-être pourriez-vous essayer de changer de secteur, ou de modifier la note minimum ?</li>`);
+	      								<li>Nous vous invitons à modifier le secteur ou la note.</li>`);
 	  				};
 	};//Fin du callback des marqueurs
 };//Fin d'addPlaceMarkers
 
 //***********************AJOUT / SUPPRESSION / MODIFICATION DES MARQUEURS************************************
-//Ajout d'un marqueur sur la carte lors d'un clic.FONCTIONNE
-map.addListener('doubleclick', function(e){
+//Ajout d'un marqueur sur la carte lors d'un clic
+map.addListener('click', function(e){
     $('#mapInfo').hide();
     $('#form').show();
     let pos = e.latLng;
@@ -365,15 +359,16 @@ map.addListener('dragend', function(){
 //Préparation d'ajout d'un marqueur sur adresse saisie
 geocoder = new google.maps.Geocoder();
 //Gestion du formulaire d'ajout d'adresse
-function closeConfirm(){
+function closeConfirm(){//Masquage du message de confirmation d'ajout
 	$('#confirmAdd').hide();
 	$('#mapInfo').show();
 };
 
+//Récupération des infos saisies dans le formulaire
 let userRating, userComment;
 $('#sendResto').click(function(e){
 const userForm = document.getElementById('addForm');
-	userRating = userForm.elements.stars;
+	userRating = userForm.elements.stars.value;
 	userComment = userForm.elements.comment.value;
   	$('#mapInfo').hide();
   	$('#confirmAdd').show()
@@ -381,10 +376,12 @@ const userForm = document.getElementById('addForm');
   	setTimeout(closeConfirm, 3000);
   	e.preventDefault();
 });
+//Masquage du formulaire si on veut annuler
 $('#cancel').click(function(e){
 	  $('#mapInfo').show();
   $('#form').hide();
 });
+
 
 let input = document.getElementById('searchTextField');
 let options = {
@@ -404,9 +401,11 @@ autoComplete.addListener('place_changed', function(){
 				createMarker(results[0]);
 				markers[0].setVisible(true);
 				markers[0].addListener('click', function(){
-					showReview(result.vicinity, result.name, result.formatted_address, 'Restocalize', userComment);
+					console.log(userRating);
+					showReview(result.vicinity, result.name, result.formatted_address, 'Restocalize', userRating, userComment);
 				});
-				showResults(result.vicinity, result.name, result.vicinity, result.rating);
+				$('#restoList').empty();
+				showResults(0, result.vicinity, result.name, result.vicinity, result.rating);
 			};
 		});
 	};
@@ -443,7 +442,7 @@ window.eqfeed_callback = function(results) {
           }
           middle(i);
           //Ajout de l'image avec Google Places, renvoie pour le moment une erreur 403, vois pourquoi
-          $('#restoList').append('<!--<img src="https://maps.googleapis.com/maps/api/streetview?size=100x100&location='+ latLng + '&fov=90&heading=235&pitch=10&key=YOUR_KEY&signature=YOUR_SIGNATURE>--><li class="name">' + results.features[i].properties.restaurantName + '</li> <li>' + results.features[i].properties.address + '</li> <li>Note moyenne :' + moyenne + '</li>');
+          $('#restoList').append('<!--<img src="https://maps.googleapis.com/maps/api/streetview?size=100x100&location='+ latLng + '&fov=90&heading=235&pitch=10&key=YOURT_KEY&signature=YOUR_SIGNATURE>--><li class="name">' + results.features[i].properties.restaurantName + '</li> <li>' + results.features[i].properties.address + '</li> <li>Note moyenne :' + moyenne + '</li>');
         }
       };*/
 //*******************FIN DE L'AJOUT DES RESTOS DEPUIS JSON**************************
