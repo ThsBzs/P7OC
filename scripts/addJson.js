@@ -28,7 +28,7 @@ window.eqfeed_callback = function(results) {
           }
           middle(i);
           //Ajout de l'image avec Google Places, renvoie pour le moment une erreur 403, vois pourquoi
-          $('#restoList').append('<!--<img src="https://maps.googleapis.com/maps/api/streetview?size=100x100&location='+ latLng + '&fov=90&heading=235&pitch=10&key=YOUR_KEY>--><li class="name">' + results.features[i].properties.restaurantName + '</li> <li>' + results.features[i].properties.address + '</li> <li>Note moyenne :' + moyenne + '</li>');
+          $('#restoList').append('<!--<img src="https://maps.googleapis.com/maps/api/streetview?size=100x100&location='+ latLng + '&fov=90&heading=235&pitch=10&key=YOUR_KEY&signature=YOUR_SIGNATURE>--><li class="name">' + results.features[i].properties.restaurantName + '</li> <li>' + results.features[i].properties.address + '</li> <li>Note moyenne :' + moyenne + '</li>');
         }
       };*/
 //*******************FIN DE L'AJOUT DES RESTOS DEPUIS JSON**************************
