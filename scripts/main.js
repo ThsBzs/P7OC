@@ -1,49 +1,21 @@
 import Dom from './dom.js';
 
-let showHome = true,
+let showHome = true,//Trois variables pour gérer l'affichage DOM
   	showAbout =false,
   	showPartners = false,
-  	pos,
+  	pos,//Trois variables Gmaps
   	map,
   	marker,
-  	image = "./images/logo2Medium.png",
-  	dom = new Dom;
+  	geocoder,//Variable pour coder les adresses
+	markers = [],//array de stockage des marqueurs positionnés
+  	image = "./images/logo2Medium.png",//Logo Restocalize
+  	dom = new Dom;//Appel du Dom
 //Premier appel de la fonction pour afficher le contenu dès l'ouverture de la page
-dom.changeDomMap();
-dom.changeDomText(showHome, showAbout, showPartners);
+dom.changeDomMap();//Charge la carte
+dom.changeDomText(showHome, showAbout, showPartners);//Charge le Dom
 
-//Fonction d'initialisation de la carte
-function initMap(){
-	map = new google.maps.Map(document.getElementById('map'), {
-      center: {lat: 48.874955, lng: 2.350517},
-      zoom: 15
-    });
-    return map;
-};
-initMap();//Appel de la carte
-
-//Fonction de création de marqueurs sans Google Places
-function createMarker(){
-    marker = new google.maps.Marker({
-        position: pos, 
-        map: map,
-        icon : image
-    });
-    markers.push(marker);
-};
-
-function createMarkerPlace(place){
-	marker = new google.maps.Marker({
-			map: map,
-	    	position: place.geometry.location,
-	    	icon : image,
-	    	visible : false
-		});
-	markers.push(marker);
-}
-
-
-//Essai de fonction pour true/false
+//***********************GESTION DE L'AFFICHAGE DOM*********************
+//Fonction true/false pour affichage Dom
 function trueFalse(){
   showHome = false;
   showAbout = false;
@@ -51,6 +23,7 @@ function trueFalse(){
   return true;
 };
 
+//Selon le clic, on affiche le contenu
 $('#home').click(function(e){
   $('#textBox').hide();
   $('#parisBox').show();
@@ -69,79 +42,98 @@ $('#partners').click(function(e){
   e.preventDefault();
 });
 
-//*************FONCTION DE MODIFICATION DE L'AFFICHAGE DOM***************************
-
- /*Gestion du clic sur le bouton de lancement*/
+//Gestion du clic sur le bouton "Commencer"
 $('#textBox').on("click", "#begin", function(){
-	$('#textBox').hide();
-	$('#parisBox').show();
+	$('#textBox').hide();//Masquage de l'intro
+	$('#parisBox').show();//Apparition carte + liste
 });
 
 //Gestion du clic sur le bouton d'ajout
 $('#parisBox').on("click", "#addNew", function(){
-	$.each(markers, function() {
+	$.each(markers, function() {//Masquage des marqueurs présents
 		this.setMap(null);
 	});
- 	$('#mapInfo').hide();
-  	$('#form').show();
+ 	$('#mapInfo').hide();//Masquage de la liste des restos
+  	$('#form').show();//Apparition du formulaire
 });
 
-/********************GESTION DE LA CARTE*************************/
-let geocoder;
-//Création d'un array markers pour stocker les marqueurs positionnés et les effacer si besoin
-let markers = [];
+
+//****************INITIALISATION CARTE ET MARQUEURS*****************
+//Fonction d'initialisation de la carte
+function initMap(){
+	map = new google.maps.Map(document.getElementById('map'), {
+      center: {lat: 48.874955, lng: 2.350517},
+      zoom: 15
+    });
+    return map;
+};
+initMap();//Appel de la carte
+
+//Création de marqueurs sans Google Places
+function createMarker(){
+    marker = new google.maps.Marker({
+        position: pos, 
+        map: map,
+        icon : image
+    });
+    markers.push(marker);
+};
+//La même chose, AVEC Places
+function createMarkerPlace(place){
+	marker = new google.maps.Marker({
+			map: map,
+	    	position: place.geometry.location,
+	    	icon : image,
+	    	visible : false
+		});
+	markers.push(marker);
+};
+
 
 //*****************GESTION DE LA GEOLOCALISATION******************
-    if (navigator.geolocation) {
+    if (navigator.geolocation) {//Si geolocalication = OK
         navigator.geolocation.getCurrentPosition(function(position) {
           	pos = {
               lat: position.coords.latitude,
               lng: position.coords.longitude
             };
-            $.each(markers, function() {
+            $.each(markers, function() {//Masquage des marqueurs présents
 				this.setMap(null);
 			});
-            createMarker();
+            createMarker();//Ajout d'un nouveau marqueur sur la position
             markers.push(marker);
-          	map.setCenter(pos);
-          	addPlaceMarkers();
-        }, function() {
-          	handleLocationError(true, marker, map.getCenter());
+          	map.setCenter(pos);//Centrage de la certe
+          	addPlaceMarkers();//Ajout des marqueurs alentour
         });
+    } else {
+    	pos = map.center;
+    	createMarker();
+    	$('#restoList').append(`<li>La <géolocalisation n'a pas fonctionné.</li>
+	      								<br>
+	      								<li>La carte a été centrée par défaut au 10, Cité Paradis, Paris.</li>`);
     };
    
 //Préparation du filtre utilisateur
 const form = document.getElementById("filterForm");
 let filter = form.elements.filterStars;
 
-$('#sendFilter').click(function(e){
-	$.each(markers, function() {
+$('#sendFilter').submit(function(e){
+	$.each(markers, function() {//Masquage des marqueurs
 		this.setMap(null);
 	});
-	addPlaceMarkers();
+	addPlaceMarkers();//Ajout des nouveaux
 	e.preventDefault();
 });
 
-//Centrage de la carte sur la position de l'utilisateur si  autorisation = ok 
-function handleLocationError(browserHasGeolocation, marker, pos) {
-	let image = "./images/logo2Medium.png";
-    marker = new google.maps.Marker({
-            position: pos,
-            map: map,
-            icon: image
-          });
-    markers.push(marker);
-    marker.setPosition(pos);
-};
-
-//Gestion de l'ajout des marqueurs en fonction de la note désirée
+//*************************UTILISATION PRINCIPALE*************************
+//Gestion de l'ajout/masquage des marqueurs en fonction de la note désirée
 function addPlaceMarkers(){
 	markers = [];//Mise à 0 du tableau des marqueurs, permet d'afficher les éléments places
-    //gestion de places autour du centre de la map
-    let request = {//Requête passée en paramètre pour le callback de Places
+    //Requête passée en paramètre pour le callback de Places
+    let request = {
     	location: map.center,
-    	radius: '500',
-    	type: ['restaurant']
+    	radius: '500',//500 mètres autour du centre
+    	type: ['restaurant']//Limitation au type resto
   	};
 
   	let service = new google.maps.places.PlacesService(map);
@@ -149,22 +141,21 @@ function addPlaceMarkers(){
 
 	//Fonction d'ajout de marqueur sur chaque résultat renvoyé par places
 	function callback(results, status) {
-	  	if (status == google.maps.places.PlacesServiceStatus.OK) {
-	  		$('#restoList').empty();
+	  	if (status == google.maps.places.PlacesServiceStatus.OK) {//Si tout roule
+	  		$('#restoList').empty();//Vidange de la liste
+	  		//Boucle sur chaque resultat renvoyé par Places
 	    	for (let i = 0; i < results.length; i++) {
-	    		//Ajout du filtre utilisateur
-	      		createMarkerPlace(results[i]);
+	      		createMarkerPlace(results[i]);//Marqueurs initialisés non visibles
+	      		//Affichage des marqueurs correspondants au filtre
 	      		if(filter.value <= results[i].rating){
-	      			//Affichage des marqueurs correspondants au filtre
 	      			markers[i].setVisible(true);
-		      		let photo = results[i].photos;
-		      		if (photo == undefined){
+		      		let photo = results[i].vicinity;
+		      		if (photo == null){//Si pas d'image, on ajoute le logo
 		      			photo = "./images/logo3_alt.png";
-		      		} else {
-		      			photo = results[i].vicinity;
 		      		};
 		      		dom.showResults(i, photo, results[i].name, results[i].vicinity, results[i].rating);
 		      		let service = new google.maps.places.PlacesService(map);//Appel à Places pour showDetails
+		      		//Affichage des infos au click sur un marqueur
 				    markers[i].addListener('click', function(){
 				      	dom.showDetails(results[i], service);
 					});
@@ -174,9 +165,11 @@ function addPlaceMarkers(){
 						markers[i].setAnimation(google.maps.Animation.BOUNCE);
 						setTimeout(function(){ markers[i].setAnimation(null); }, 750);
 					});
+					//Affichage des infos au click sur un resto
 					$(list).click(function(){
 						dom.showDetails(results[i], service);
 					});
+					//Coloration du background sur le resto correspondant dans la liste
 					markers[i].addListener('mouseover', function(){
 						$(list).css('background-color', '#ffff99');
 					});
@@ -185,11 +178,8 @@ function addPlaceMarkers(){
 					});
 	      		};//Fin du if pour le filtre de notes
 	    	}//Fin de la boucle d'affichage des marqueurs
-	  	} else {
-	        // Browser doesn't support Geolocation
-	        handleLocationError(false, marker, map.getCenter());
-	    };
-	    //Affichage d'un message si rien à afficher
+	  	};
+	    //Message si rien à afficher
 		      		let check = document.getElementById('resultBox');
 	  				if(check == null){
 	      				$('#restoList').append(`<li>Désolé, aucun restaurant ne correspond à votre recherche.</li>
@@ -202,7 +192,6 @@ function addPlaceMarkers(){
 //***********************AJOUT / SUPPRESSION / MODIFICATION DES MARQUEURS************************************
 //Ajout d'un marqueur sur la carte lors d'un clic
 map.addListener('click', function(e){
-	console.log(e.latLng);
 	$('#mapInfo').hide();
     $('#form').show();
     pos = e.latLng;

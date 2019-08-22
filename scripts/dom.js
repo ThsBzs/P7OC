@@ -64,11 +64,11 @@ export default class Dom {
                             		<form id="addForm">
 	                             		<div class="form-group">
 	                               			<label>Addresse</label>
-	                               			<input id="searchTextField" type="text" size="50" placeholder="Saisissez votre recherche">
+	                               			<input id="searchTextField" type="text" size="50" placeholder="Saisissez votre recherche" required>
 	                              		</div>
 	                              		<div class="form-group">
 	                                		<label for="commentaire">Commentaire:</label>
-	                                		<input type="text" class="form-control" id="comment" placeholder="Votre commentaire">
+	                                		<input type="text" class="form-control" id="comment" placeholder="Votre commentaire" required>
 	                              		</div>
 	                              		<div class="form-group">
 	                                		<label for="stars">Note:</label>
@@ -80,7 +80,7 @@ export default class Dom {
 												<option>5</option>
 	                              			</select>
 	                            		</div>
-	                            		<input type="button" class="btn btn-success" id="sendResto" value="Envoyer"></input>
+	                            		<input type="submit" class="btn btn-success" id="sendResto" value="Envoyer"></input>
 	                            		<input type="button" class="btn btn-danger" id="cancel" value="Annuler"></input>
                           			</form> 
                           		</div>
@@ -100,7 +100,7 @@ export default class Dom {
 	$('#restoList').append(`<div class="container" id="resultBox">
 								<div class="row" id="` + id +  `">
 			    					<div class="col-lg-5">
-			     						<img src="https://maps.googleapis.com/maps/api/streetview?size=200x200&location=` + photo + `&fov=90&heading=235&pitch=10&key=YOUR_KEY">
+			     						<img src="https://maps.googleapis.com/maps/api/streetview?size=200x200&location=` + photo + `&fov=90&heading=235&pitch=10&key=AIzaSyAIdFrOiY5BVNIG8Plbadd0Fpjfx7IueTo">
 			     					</div>
 			      					<div class="col-lg-7">
 			      						<li class="name">` + name + `</li> 
@@ -120,7 +120,7 @@ export default class Dom {
 		.append(`<div class="container">
 					<div class="row" id="reviewBox">
 						<div class="col-lg-5">
-							<img src="https://maps.googleapis.com/maps/api/streetview?size=200x200&location=`+ photo + `&fov=90&heading=235&pitch=10&key=YOUR_KEY">
+							<img src="https://maps.googleapis.com/maps/api/streetview?size=200x200&location=`+ photo + `&fov=90&heading=235&pitch=10&key=AIzaSyAIdFrOiY5BVNIG8Plbadd0Fpjfx7IueTo">
 						</div>
 						<div class="col-lg-7">
 							<ul>
@@ -143,7 +143,7 @@ export default class Dom {
 		});
 	};
 
-	//Méthode d'affichage des détails 
+	//Remplissage de la modale précédente
 	showDetails(results, service){
 		let self = this;
 		let photo = results.photos;
